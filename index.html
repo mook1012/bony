@@ -115,7 +115,7 @@
         .tabs { display: flex; gap: 4px; }
         .tab { padding: 4px 16px; background: #fff; border: 1px solid var(--cell-border); border-bottom: none; border-radius: 4px 4px 0 0; font-weight: bold; color: #1a73e8; }
         
-        /* Floating Selection Action Bar (No Right Click Needed) */
+        /* Floating Selection Action Bar (No Emoji) */
         .selection-bar {
             position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
             background: #202124; color: #fff; padding: 10px 20px; border-radius: 8px;
@@ -158,6 +158,9 @@
         .help-section ul { padding-left: 20px; }
         .help-section li { margin-bottom: 6px; }
 
+        .btn-execute { background: #0f9d58; color: #fff; }
+        .btn-execute:hover { background: #0b8043; }
+
     </style>
 </head>
 <body>
@@ -182,8 +185,8 @@
         <button onclick="shuffleRows()">シャッフル</button>
         
         <button onclick="resetProgress()" style="color: #d93025; font-weight: bold;">全てリセット</button>
-        <button onclick="resetByRegion()">単元リセット</button>
-        <button onclick="excludeByRegion()">単元ごと削除</button>
+        <button onclick="openRegionSelectModal('reset')">単元ごとリセット</button>
+        <button onclick="openRegionSelectModal('exclude')">単元ごと削除</button>
         <button onclick="restoreExcluded()" style="color: #0f9d58;">削除を復元</button>
 
         <div style="width: 1px; height: 24px; background: #dadce0; margin: 0 8px;"></div>
@@ -249,13 +252,13 @@
         </div>
     </div>
 
-    <!-- Floating Selection Action Bar (No Right Click Needed) -->
+    <!-- Floating Selection Action Bar -->
     <div id="selectionBar" class="selection-bar">
         <span id="selectionCount" style="margin-right: 8px;">0件選択中</span>
-        <button id="btnEditAnswer" onclick="triggerEdit()" style="color: #8ab4f8; display: none;">📝 別名を登録(上書き)</button>
-        <button onclick="triggerForceCorrect()" style="color: #81c995;">✅ 一括正解</button>
-        <button onclick="triggerRetry()">🔄 やり直す(未回答へ)</button>
-        <button onclick="triggerDelete()" class="btn-danger-light">✖ 一括削除(リスト除外)</button>
+        <button id="btnEditAnswer" onclick="triggerEdit()" style="color: #8ab4f8; display: none;">別名を登録(上書き)</button>
+        <button onclick="triggerForceCorrect()" style="color: #81c995;">一括正解</button>
+        <button onclick="triggerRetry()">やり直す(未回答へ)</button>
+        <button onclick="triggerDelete()" class="btn-danger-light">一括削除(リスト除外)</button>
         <div style="width: 1px; height: 16px; background: #5f6368; margin: 0 4px;"></div>
         <button onclick="clearSelection()" style="background: none; border: none; font-size: 20px; padding: 0 4px; color: #9aa0a6;" title="選択解除">×</button>
     </div>
@@ -269,6 +272,26 @@
     </div>
 
     <!-- Modals -->
+    <!-- Region Select Modal (Reset / Exclude) -->
+    <div id="regionSelectModal" class="modal-overlay">
+        <div class="modal-content" style="width: 450px;">
+            <h2 class="modal-title" id="regionSelectTitle">単元を選択</h2>
+            <p style="margin-bottom: 16px; font-size: 13px; color: #5f6368;">操作対象にしたい単元にチェックを入れてください。</p>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button onclick="toggleAllRegions(true)" style="padding: 4px 8px; font-size: 12px; cursor: pointer;">すべて選択</button>
+                <button onclick="toggleAllRegions(false)" style="padding: 4px 8px; font-size: 12px; cursor: pointer;">選択を解除</button>
+            </div>
+
+            <div id="regionSelectList" style="margin-bottom: 20px; max-height: 350px; overflow-y: auto; padding-right: 8px;">
+                <!-- JSでチェックボックスを生成 -->
+            </div>
+            
+            <button class="modal-btn btn-execute" id="btnExecuteRegionAction">実行する</button>
+            <button class="modal-btn btn-close" onclick="closeRegionSelectModal()">キャンセル</button>
+        </div>
+    </div>
+
     <!-- View Modal -->
     <div id="viewModal" class="modal-overlay">
         <div class="modal-content">
@@ -310,7 +333,7 @@
             <h2 class="modal-title">使い方ガイド</h2>
             
             <div class="help-section">
-                <h3>📝 基本的な解答方法</h3>
+                <h3>基本的な解答方法</h3>
                 <ul>
                     <li><strong>「英語解答」</strong>の列に単語を入力し、<code>Enter</code>キーを押すと自動で正誤判定されます。</li>
                     <li>正解すると自動的に次のセルに移動し、サクサク進められます。</li>
@@ -318,24 +341,24 @@
             </div>
 
             <div class="help-section">
-                <h3>🖱️ 【新機能】なぞって一括選択＆操作</h3>
+                <h3>なぞって一括選択＆操作</h3>
                 <ul>
-                    <li>入力欄以外の場所（日本語テキストや行の番号など）を<strong>クリックしたまま上下になぞる（ドラッグする）</strong>と、複数行を直感的にまとめて選択・解除できます。（右クリックやShiftキーなどは一切不要です！）</li>
+                    <li>入力欄以外の場所（日本語テキストや行の番号など）を<strong>クリックしたまま上下になぞる（ドラッグする）</strong>と、複数行を直感的にまとめて選択・解除できます。</li>
                     <li>行を選択すると画面下部に「アクションバー」が表示され、<strong>「一括正解」「やり直す」「除外」</strong>などがワンタップで素早く行えます。</li>
-                    <li>1行だけ選択した場合は「📝 別名を登録」ボタンが表示され、正解を上書き登録できます。</li>
+                    <li>1行だけ選択した場合は「別名を登録」ボタンが表示され、正解を上書き登録できます。</li>
                 </ul>
             </div>
 
             <div class="help-section">
-                <h3>🗑️ 問題の非表示と削除</h3>
+                <h3>問題の非表示と削除</h3>
                 <ul>
                     <li><strong>覚えたものを隠す:</strong> 正解した問題を一時的にリストから見えなくします。</li>
-                    <li><strong>単元ごと削除 / ✖ボタン:</strong> 今は勉強しない問題や単元をリストから完全に除外します（「削除を復元」でいつでも元に戻せます）。</li>
+                    <li><strong>単元ごと削除 / 除外ボタン:</strong> 今は勉強しない問題や単元をリストから完全に除外します（「削除を復元」でいつでも元に戻せます）。</li>
                 </ul>
             </div>
 
             <div class="help-section">
-                <h3>💡 その他の機能</h3>
+                <h3>その他の機能</h3>
                 <ul>
                     <li><strong>ヒント:</strong> 全くわからない時は、セルを選択してヒントボタンを押すと頭文字が表示されます。</li>
                     <li><strong>赤シート機能:</strong> 上部のチェックボックスで日本語や正解一覧を塗りつぶせます。クリックで一時的に中身を確認できます。</li>
@@ -360,12 +383,14 @@
         let isDragging = false;
         let dragMode = 'select';
         let dragStartIdx = -1;
+        let regionActionType = ''; // 'reset' or 'exclude'
 
         const tableBody = document.getElementById('tableBody');
         const formulaInput = document.getElementById('formulaInput');
         const progressText = document.getElementById('progressText');
         const homeModal = document.getElementById('homeModal');
         const viewModal = document.getElementById('viewModal');
+        const regionSelectModal = document.getElementById('regionSelectModal');
         const previewPanel = document.getElementById('previewPanel');
         const sheetContainer = document.getElementById('sheetContainer');
         const resizer = document.getElementById('dragMe');
@@ -379,7 +404,7 @@
         window.onload = () => {
             startQuiz('normal');
             initResizer();
-            initDragSelection(); // なぞり選択機能を初期化
+            initDragSelection();
         };
 
         function initializeData() {
@@ -455,7 +480,7 @@
                     </td>
                     <td class="${ansClass}"><div class="cell-content">${q.en.join(', ')}</div></td>
                     <td><div class="${starClass}" onclick="toggleStar(${q.id}, this)">★</div></td>
-                    <td><div style="cursor:pointer; color:#70757a; text-align:center; font-size: 16px;" onclick="excludeQuestion(${q.id})" title="この問題を一時削除">✖</div></td>
+                    <td><div style="cursor:pointer; color:#70757a; text-align:center; font-size: 14px;" onclick="excludeQuestion(${q.id})" title="この問題を一時削除">除外</div></td>
                 `;
                 
                 tableBody.appendChild(tr);
@@ -467,14 +492,13 @@
             updateRedSheetGlobal();
         }
 
-        // --- なぞって直感的に選択するロジック（右クリック・特殊キー不要） ---
+        // --- なぞって直感的に選択するロジック ---
         function initDragSelection() {
             tableBody.addEventListener('mousedown', (e) => {
-                // 入力欄やボタンをタップした場合はなぞり選択を発動させない
                 if (e.target.tagName === 'INPUT' || 
                     e.target.classList.contains('status-icon') || 
                     e.target.classList.contains('star-icon') || 
-                    e.target.innerText === '✖') {
+                    e.target.innerText === '除外') {
                     return; 
                 }
                 
@@ -484,7 +508,6 @@
                 isDragging = true;
                 const id = parseInt(tr.id.replace('row-', ''));
                 
-                // 最初にタップした行が既に選択済みなら「解除モード」、未選択なら「選択モード」にする
                 if (selectedRows.has(id)) {
                     dragMode = 'deselect';
                     selectedRows.delete(id);
@@ -496,7 +519,7 @@
                 }
                 
                 updateSelectionBar();
-                e.preventDefault(); // テキストの標準選択ハイライトを防ぐ
+                e.preventDefault();
             });
 
             tableBody.addEventListener('mouseover', (e) => {
@@ -538,7 +561,6 @@
                 bar.style.display = 'flex';
                 countSpan.innerText = `${selectedRows.size}件選択中`;
                 
-                // 1件選択の時だけ「別名を登録（上書き）」ボタンを表示
                 if (selectedRows.size === 1) {
                     editBtn.style.display = 'inline-block';
                 } else {
@@ -559,7 +581,7 @@
                 inputEl.focus();
                 inputEl.dataset.forceCorrectMode = "true";
             }
-            clearSelection(); // 編集状態に入ったらツールバーは消す
+            clearSelection();
         };
 
         window.triggerForceCorrect = function() {
@@ -817,52 +839,82 @@
             }
         }
 
-        function resetByRegion() {
-            const regions = [...new Set(quizData.map(q => q.region))];
-            const regionStr = regions.map((r, i) => `${i + 1}: ${r}`).join('\n');
+        // --- 単元選択モーダル (リセット・削除) ---
+        function openRegionSelectModal(actionType) {
+            regionActionType = actionType;
+            const titleEl = document.getElementById('regionSelectTitle');
+            const btnEl = document.getElementById('btnExecuteRegionAction');
             
-            const input = prompt(`リセットしたい単元の番号を入力してください：\n${regionStr}`);
-            if (input === null) return;
-            const idx = parseInt(input) - 1;
-            
-            if (idx >= 0 && idx < regions.length) {
-                const targetRegion = regions[idx];
-                quizData.forEach(q => {
-                    if (q.region === targetRegion) {
-                        q.status = 'unanswered';
-                        q.userAnswer = '';
-                    }
-                });
-                
-                score = quizData.filter(q => q.status === 'correct').length;
-                renderTable();
-                alert(`${targetRegion} の解答をリセットしました。`);
+            if (actionType === 'reset') {
+                titleEl.innerText = '単元ごとリセット';
+                btnEl.innerText = 'リセットを実行する';
+            } else {
+                titleEl.innerText = '単元ごと削除(除外)';
+                btnEl.innerText = '除外を実行する';
             }
+
+            const listEl = document.getElementById('regionSelectList');
+            listEl.innerHTML = '';
+
+            const regions = [...new Set(quizData.map(q => q.region))];
+            regions.forEach(r => {
+                const label = document.createElement('label');
+                label.className = 'view-modal-label';
+                label.innerHTML = `<input type="checkbox" value="${r}" class="region-checkbox"> ${r}`;
+                listEl.appendChild(label);
+            });
+
+            regionSelectModal.style.display = 'flex';
         }
+
+        function closeRegionSelectModal() {
+            regionSelectModal.style.display = 'none';
+        }
+
+        function toggleAllRegions(check) {
+            const checkboxes = document.querySelectorAll('.region-checkbox');
+            checkboxes.forEach(cb => cb.checked = check);
+        }
+
+        document.getElementById('btnExecuteRegionAction').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.region-checkbox:checked');
+            const selectedRegions = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedRegions.length === 0) {
+                alert('単元が選択されていません。');
+                return;
+            }
+
+            if (regionActionType === 'reset') {
+                if (confirm(`選択した単元の解答をリセットしますか？\n\n${selectedRegions.join('\n')}`)) {
+                    quizData.forEach(q => {
+                        if (selectedRegions.includes(q.region)) {
+                            q.status = 'unanswered';
+                            q.userAnswer = '';
+                        }
+                    });
+                    score = quizData.filter(q => q.status === 'correct').length;
+                    renderTable();
+                    closeRegionSelectModal();
+                }
+            } else if (regionActionType === 'exclude') {
+                if (confirm(`選択した単元をリストから除外しますか？\n（「削除を復元」で元に戻せます）\n\n${selectedRegions.join('\n')}`)) {
+                    quizData.forEach(q => {
+                        if (selectedRegions.includes(q.region)) {
+                            q.excluded = true;
+                        }
+                    });
+                    renderTable();
+                    closeRegionSelectModal();
+                }
+            }
+        });
 
         function excludeQuestion(id, silent = false) {
             const q = quizData.find(q => q.id === id);
             if (q) {
                 q.excluded = true;
                 if (!silent) renderTable();
-            }
-        }
-
-        function excludeByRegion() {
-            const regions = [...new Set(quizData.map(q => q.region))];
-            const regionStr = regions.map((r, i) => `${i + 1}: ${r}`).join('\n');
-            
-            const input = prompt(`一時削除（除外）したい単元の番号を入力してください：\n${regionStr}`);
-            if (input === null) return;
-            
-            const idx = parseInt(input) - 1;
-            if (idx >= 0 && idx < regions.length) {
-                const targetRegion = regions[idx];
-                quizData.forEach(q => {
-                    if (q.region === targetRegion) q.excluded = true;
-                });
-                renderTable();
-                alert(`${targetRegion} を一時削除しました。（「削除を復元」ボタンで元に戻せます）`);
             }
         }
 
