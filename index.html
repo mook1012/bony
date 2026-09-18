@@ -41,10 +41,10 @@
         #formulaInput { flex-grow: 1; border: none; font-size: 14px; font-family: var(--font-family); outline: none; color: #202124; }
 
         /* Main Workspace layout */
-        .workspace { display: flex; flex-grow: 1; overflow: hidden; position: relative; width: 100%; }
+        .workspace { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
         
         /* Spreadsheet Grid */
-        .sheet-container { flex-grow: 1; overflow: auto; background: #fff; position: relative; min-width: 300px; height: 100%; }
+        .sheet-container { flex-grow: 1; overflow: auto; background: #fff; position: relative; min-width: 300px; user-select: none; }
         table { border-collapse: collapse; width: 100%; table-layout: fixed; }
         th { position: sticky; top: 0; background: var(--header-bg); border: 1px solid var(--cell-border); color: #5f6368; font-weight: normal; font-size: 13px; padding: 4px 0; z-index: 2; user-select: none; text-align: center; }
         th.row-num-header { width: 40px; left: 0; z-index: 3; }
@@ -56,15 +56,15 @@
         .col-jp { width: 220px; }
         .col-en { width: 280px; }
         .col-ans { width: 250px; }
-        .col-img { width: 60px; display: none; } 
         .col-star { width: 50px; }
+        .col-exclude { width: 50px; }
 
-        td { border: 1px solid var(--cell-border); padding: 0; font-size: 14px; color: #202124; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        td { border: 1px solid var(--cell-border); padding: 0; font-size: 14px; color: #202124; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default; }
         .row-num { position: sticky; left: 0; background: var(--header-bg); text-align: center; color: #70757a; font-size: 12px; z-index: 1; border-right: 2px solid #e2e3e3; width: 40px; pointer-events: none; padding: 6px 0; }
         
         /* Inputs & Cells */
         .cell-content { padding: 6px 8px; width: 100%; height: 100%; display: flex; align-items: center; overflow: hidden; }
-        input.sheet-input { width: 100%; height: 100%; border: none; padding: 6px 8px; font-size: 14px; font-family: var(--font-family); outline: 2px solid transparent; outline-offset: -2px; background: transparent; transition: outline 0.1s; }
+        input.sheet-input { width: 100%; height: 100%; border: none; padding: 6px 8px; font-size: 14px; font-family: var(--font-family); outline: 2px solid transparent; outline-offset: -2px; background: transparent; transition: outline 0.1s; cursor: text; }
         input.sheet-input:focus { outline: 2px solid var(--active-border); background: #fff; z-index: 1; position: relative; }
         
         /* Features */
@@ -80,54 +80,41 @@
         .red-sheet-active .red-target { background-color: var(--red-sheet-color) !important; color: var(--red-sheet-color) !important; user-select: none; border-radius: 4px; }
         .red-sheet-active .red-target:hover { color: #202124 !important; background-color: transparent !important; cursor: pointer; }
         
-        /* Correct/Wrong Colors */
+        /* Colors & Selection */
         .row-correct { background-color: var(--correct-bg); }
         .row-wrong { background-color: var(--wrong-bg); }
+        .row-selected { background-color: #e8f0fe !important; }
+        .row-selected td { border-top: 1px solid #1a73e8; border-bottom: 1px solid #1a73e8; }
         
         /* Resizer */
         .resizer { 
             width: 8px; 
             cursor: col-resize; 
-            background-color: var(--cell-border); 
+            background-color: #dadce0; 
             transition: background 0.2s; 
             z-index: 10; 
-            flex-shrink: 0;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 1px 0 0 rgba(0,0,0,0.1), inset -1px 0 0 rgba(0,0,0,0.1);
         }
         .resizer::after {
-            content: "||";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #888;
-            font-size: 10px;
-            letter-spacing: -1px;
-            pointer-events: none;
+            content: "⋮";
+            color: #5f6368;
+            font-size: 18px;
+            font-weight: bold;
         }
-        .resizer:hover, .resizer.dragging { 
-            background-color: #1a73e8; 
-        }
-        .resizer:hover::after, .resizer.dragging::after {
-            color: #fff;
-        }
+        .resizer:hover, .resizer.dragging { background-color: #1a73e8; color: white; }
+        .resizer:hover::after, .resizer.dragging::after { color: white; }
 
         /* Image Preview Panel (Right Side) */
-        .image-preview-panel { 
-            width: 350px; 
-            min-width: 150px; 
-            background: #f8f9fa; 
-            display: flex; 
-            flex-direction: column; 
-            flex-shrink: 0; /* 不要な縮小を防ぐ */
-        }
+        .image-preview-panel { width: 350px; min-width: 150px; background: #f8f9fa; display: flex; flex-direction: column; }
         .image-preview-panel.collapsed { display: none; }
         .preview-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #fff; border-bottom: 1px solid var(--cell-border); font-size: 14px; font-weight: bold; color: #3c4043; }
         .preview-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow: auto; text-align: center; }
         #previewImg { max-width: 100%; max-height: 400px; border: 1px solid #dadce0; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none; }
         #previewPlaceholder { color: #70757a; font-size: 13px; }
-        #previewJp { margin-bottom: 12px; font-weight: bold; color: #202124; display: none; }
-        #previewNum { margin-bottom: 4px; font-size: 12px; color: #1a73e8; font-weight: bold; display: none; }
+        #previewNum { margin-bottom: 12px; font-size: 14px; color: #1a73e8; font-weight: bold; display: none; }
         
         .toggle-panel-btn { background: none; border: none; cursor: pointer; color: #5f6368; font-size: 14px; font-weight: bold; }
 
@@ -138,7 +125,7 @@
         
         /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: #fff; padding: 24px; border-radius: 8px; width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-content { background: #fff; padding: 24px; border-radius: 8px; width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #202124; }
         .modal-btn { display: block; width: 100%; padding: 12px; margin-bottom: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; border: none; text-align: center; }
         .btn-normal { background: #e8f0fe; color: #1a73e8; }
@@ -146,6 +133,29 @@
         .btn-danger { background: #fce8e6; color: #d93025; }
         .btn-danger:hover { background: #fad2cf; }
         .btn-close { background: #f1f3f4; color: #3c4043; margin-top: 24px; }
+    
+        /* Column Hiding Classes */
+        body.hide-col-status .col-status, body.hide-col-status td:nth-child(2) { display: none !important; }
+        body.hide-col-region .col-region, body.hide-col-region td:nth-child(3) { display: none !important; }
+        body.hide-col-num .col-num, body.hide-col-num td:nth-child(4) { display: none !important; }
+        body.hide-col-jp .col-jp, body.hide-col-jp td:nth-child(5) { display: none !important; }
+        body.hide-col-en .col-en, body.hide-col-en td:nth-child(6) { display: none !important; }
+        body.hide-col-ans .col-ans, body.hide-col-ans td:nth-child(7) { display: none !important; }
+        body.hide-col-star .col-star, body.hide-col-star td:nth-child(8) { display: none !important; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: #fff; min-width: 160px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); z-index: 1000; border-radius: 4px; border: 1px solid var(--cell-border); padding: 8px 0; }
+        .dropdown-content label { display: flex; align-items: center; padding: 8px 16px; cursor: pointer; color: #202124; font-size: 13px; }
+        .dropdown-content label:hover { background-color: #f1f3f4; }
+        .dropdown-content input { margin-right: 12px; }
+
+        /* Help Content Styles */
+        .help-section { margin-bottom: 20px; font-size: 14px; color: #3c4043; line-height: 1.6; }
+        .help-section h3 { font-size: 16px; margin-bottom: 8px; color: #1a73e8; border-bottom: 1px solid #e2e3e3; padding-bottom: 4px; }
+        .help-section ul { padding-left: 20px; }
+        .help-section li { margin-bottom: 6px; }
+
     </style>
 </head>
 <body>
@@ -157,7 +167,20 @@
             <input type="text" class="app-title" value="骨学 英単語 暗記用スプレッドシート" readonly>
             <div class="app-menus">
                 <span class="menu-item" onclick="openHomeModal()">ファイル(F)</span>
-                <span class="menu-item">表示(V)</span>
+                <div class="dropdown">
+                    <span class="menu-item" onclick="toggleViewMenu(event)">表示(V)</span>
+                    <div id="viewMenu" class="dropdown-content">
+                        <div style="padding: 4px 16px; font-size: 11px; color: #5f6368; font-weight: bold; border-bottom: 1px solid var(--cell-border); margin-bottom: 4px;">列の表示/非表示</div>
+                        <label><input type="checkbox" checked onchange="toggleCol('status')"> 判定</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('region')"> 部位</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('num')"> 番号</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('jp')"> 日本語</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('en')"> 英語解答</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('ans')"> 正解一覧</label>
+                        <label><input type="checkbox" checked onchange="toggleCol('star')"> 重要</label>
+                    </div>
+                </div>
+                <span class="menu-item" onclick="openHelpModal()" style="color: #1a73e8; font-weight: bold;">使い方(H)</span>
             </div>
         </div>
     </div>
@@ -168,11 +191,17 @@
         <button onclick="saveProgress()">状態を保存</button>
         <button onclick="shuffleRows()">シャッフル</button>
         
+        <button onclick="resetProgress()" style="color: #d93025; font-weight: bold;">全てリセット</button>
+        <button onclick="resetByRegion()">単元リセット</button>
+        <button onclick="excludeByRegion()">単元ごと削除</button>
+        <button onclick="restoreExcluded()" style="color: #0f9d58;">削除を復元</button>
+
         <div style="width: 1px; height: 24px; background: #dadce0; margin: 0 8px;"></div>
         
         <button onclick="filterBy('all')">全て表示</button>
         <button onclick="filterBy('star')">重要のみ</button>
         <button onclick="filterBy('mistake')">復習(間違いのみ)</button>
+        <button onclick="filterBy('unmemorized')">覚えたものを隠す</button>
         
         <div style="width: 1px; height: 24px; background: #dadce0; margin: 0 8px;"></div>
         
@@ -190,9 +219,9 @@
     </div>
 
     <!-- Workspace -->
-    <div class="workspace">
+    <div class="workspace" id="workspaceContainer">
         <!-- Spreadsheet Grid -->
-        <div class="sheet-container">
+        <div class="sheet-container" id="sheetContainer">
             <table id="quizTable">
                 <thead>
                     <tr>
@@ -204,6 +233,7 @@
                         <th class="col-en">英語解答 (ここに入力)</th>
                         <th class="col-ans">正解一覧</th>
                         <th class="col-star">重要</th>
+                        <th class="col-exclude">削除</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -224,7 +254,6 @@
             <div class="preview-content">
                 <p id="previewPlaceholder">問題のセルを選択すると<br>ここに画像が表示されます</p>
                 <div id="previewNum"></div>
-                <div id="previewJp"></div>
                 <img id="previewImg" src="" alt="問題画像">
             </div>
         </div>
@@ -256,8 +285,60 @@
         </div>
     </div>
 
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay">
+        <div class="modal-content" style="width: 500px;">
+            <h2 class="modal-title">使い方ガイド</h2>
+            
+            <div class="help-section">
+                <h3>📝 基本的な解答方法</h3>
+                <ul>
+                    <li><strong>「英語解答」</strong>の列に単語を入力し、<code>Enter</code>キーを押すと自動で正誤判定されます。</li>
+                    <li>正解すると自動的に次のセルに移動し、サクサク進められます。</li>
+                    <li>入力セルを選択すると、右側のパネルに該当部位の画像が表示されます。</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>🖱️ 行の複数選択・一括操作</h3>
+                <ul>
+                    <li><code>Shift</code>キーを押しながら別の行をクリックすると、間の行をまとめて選択できます。</li>
+                    <li><code>Ctrl</code>キー（Macは<code>Command</code>）を押しながらクリックで個別に複数選択できます。</li>
+                    <li>選択状態で<strong>右クリック</strong>すると、一括で正解にしたり未回答に戻すメニューが表示されます。</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>🔄 便利なやり直し・修正機能</h3>
+                <ul>
+                    <li>単一セルで右クリックすると、解答の修正（別名の登録）や未回答状態へのリセットができます。</li>
+                    <li>判定列の<strong>[正] / [誤]</strong>をクリックすることでも未回答に戻せます。</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>🗑️ 問題の非表示と削除</h3>
+                <ul>
+                    <li><strong>覚えたものを隠す:</strong> 正解した問題を一時的にリストから見えなくします。</li>
+                    <li><strong>単元ごと削除 / ✖ボタン:</strong> 正解・未回答問わず、今は勉強しない問題や単元をリストから完全に除外します（「削除を復元」でいつでも元に戻せます）。</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>💡 その他の機能</h3>
+                <ul>
+                    <li><strong>状態を保存:</strong> 今の進捗状況をブラウザに保存します。次回「ファイル」メニューから再開できます。</li>
+                    <li><strong>ヒント:</strong> 全くわからない時は、セルを選択してヒントボタンを押すと頭文字が表示されます。</li>
+                    <li><strong>赤シート機能:</strong> チェックボックスで日本語や正解一覧を塗りつぶせます。クリックで一時的に中身を確認できます。</li>
+                </ul>
+            </div>
+            
+            <button class="modal-btn btn-close" onclick="closeHelpModal()">閉じる</button>
+        </div>
+    </div>
+
     <script>
-        const allQuestions = [{"id": 41, "region": "頸椎1", "num": "(1)", "jp": "環椎後弓", "en": ["Posterior arch of atlas", "Posterior arch"], "img": "keitsui1.jpg"}, {"id": 42, "region": "頸椎1", "num": "(2)", "jp": "棘突起", "en": ["Spinous process"], "img": "keitsui1.jpg"}, {"id": 43, "region": "頸椎1", "num": "(3)", "jp": "第7頸椎(隆椎)", "en": ["C7 vertebra", "vertebra prominens"], "img": "keitsui1.jpg"}, {"id": 44, "region": "頸椎1", "num": "(4)", "jp": "鈎状突起", "en": ["Uncinate process", "Uncus of body"], "img": "keitsui1.jpg"}, {"id": 45, "region": "頸椎1", "num": "(5)", "jp": "第2頸椎(軸椎)", "en": ["C2 vertebra", "axis"], "img": "keitsui1.jpg"}, {"id": 46, "region": "頸椎1", "num": "(6)", "jp": "脊髄神経溝", "en": ["Sulcus for spinal nerve"], "img": "keitsui1.jpg"}, {"id": 47, "region": "頸椎1", "num": "(7)", "jp": "横突孔", "en": ["Transverse foramen"], "img": "keitsui1.jpg"}, {"id": 48, "region": "頸椎2", "num": "(1)", "jp": "後結節", "en": ["Posterior tubercle"], "img": "keitsui2.jpg"}, {"id": 49, "region": "頸椎2", "num": "(2)", "jp": "椎骨動脈溝", "en": ["Groove for vertebral artery"], "img": "keitsui2.jpg"}, {"id": 50, "region": "頸椎2", "num": "(3)", "jp": "横突起", "en": ["Transverse process"], "img": "keitsui2.jpg"}, {"id": 51, "region": "頸椎2", "num": "(4)", "jp": "前結節", "en": ["Anterior tubercle"], "img": "keitsui2.jpg"}, {"id": 52, "region": "頸椎2", "num": "(5)", "jp": "歯突起窩", "en": ["Facet for dens"], "img": "keitsui2.jpg"}, {"id": 53, "region": "頸椎2", "num": "(6)", "jp": "後弓", "en": ["Posterior arch"], "img": "keitsui2.jpg"}, {"id": 54, "region": "頸椎2", "num": "(7)", "jp": "外側塊", "en": ["Lateral masses"], "img": "keitsui2.jpg"}, {"id": 55, "region": "頸椎3", "num": "(1)", "jp": "歯突起", "en": ["Dens"], "img": "keitsui3.jpg"}, {"id": 56, "region": "頸椎3", "num": "(2)", "jp": "椎弓", "en": ["Vertebral arch"], "img": "keitsui3.jpg"}, {"id": 57, "region": "頸椎3", "num": "(3)", "jp": "下関節面", "en": ["Inferior articular facet"], "img": "keitsui3.jpg"}, {"id": 58, "region": "頸椎3", "num": "(4)", "jp": "横突孔", "en": ["Transverse foramen"], "img": "keitsui3.jpg"}, {"id": 59, "region": "頸椎3", "num": "(5)", "jp": "前関節面", "en": ["Anterior articular facet"], "img": "keitsui3.jpg"}, {"id": 60, "region": "頸椎4", "num": "(1)", "jp": "棘突起", "en": ["Spinous process"], "img": "keitsui4.jpg"}, {"id": 61, "region": "頸椎4", "num": "(2)", "jp": "上関節面", "en": ["Superior articular facet"], "img": "keitsui4.jpg"}, {"id": 62, "region": "頸椎4", "num": "(3)", "jp": "横突孔", "en": ["Transverse foramen"], "img": "keitsui4.jpg"}, {"id": 63, "region": "頸椎4", "num": "(4)", "jp": "横突起, 脊髄神経溝", "en": ["Transverse process with sulcus for spinal nerve"], "img": "keitsui4.jpg"}, {"id": 64, "region": "頸椎4", "num": "(5)", "jp": "椎弓板", "en": ["Lamina of vertebral arch", "Lamina"], "img": "keitsui4.jpg"}, {"id": 65, "region": "胸椎", "num": "(1)", "jp": "上肋骨窩", "en": ["Superior costal facet"], "img": "kyoutsui.jpg"}, {"id": 66, "region": "胸椎", "num": "(2)", "jp": "椎体", "en": ["Vertebral body"], "img": "kyoutsui.jpg"}, {"id": 67, "region": "胸椎", "num": "(3)", "jp": "下関節面", "en": ["Inferior articular facet"], "img": "kyoutsui.jpg"}, {"id": 68, "region": "胸椎", "num": "(4)", "jp": "棘突起", "en": ["Spinous process"], "img": "kyoutsui.jpg"}, {"id": 69, "region": "胸椎", "num": "(5)", "jp": "椎弓板", "en": ["Lamina of vertebral arch", "Lamina"], "img": "kyoutsui.jpg"}, {"id": 70, "region": "胸椎", "num": "(6)", "jp": "上関節面", "en": ["Superior articular facet"], "img": "kyoutsui.jpg"}, {"id": 71, "region": "胸椎", "num": "(7)", "jp": "椎弓根", "en": ["Pedicle of vertebral arch", "Pedicle"], "img": "kyoutsui.jpg"}, {"id": 72, "region": "胸椎", "num": "(8)", "jp": "横突肋骨窩", "en": ["Costal facet on transverse process", "Transverse costal facet"], "img": "kyoutsui.jpg"}, {"id": 73, "region": "腰椎", "num": "(1)", "jp": "上関節突起", "en": ["Superior articular process"], "img": "youtsui.jpg"}, {"id": 74, "region": "腰椎", "num": "(2)", "jp": "棘突起", "en": ["Spinous process"], "img": "youtsui.jpg"}, {"id": 75, "region": "腰椎", "num": "(3)", "jp": "下関節面", "en": ["Inferior articular facet"], "img": "youtsui.jpg"}, {"id": 76, "region": "腰椎", "num": "(4)", "jp": "下椎切痕", "en": ["Inferior vertebral notch"], "img": "youtsui.jpg"}, {"id": 77, "region": "腰椎", "num": "(5)", "jp": "上関節面", "en": ["Superior articular facet"], "img": "youtsui.jpg"}, {"id": 78, "region": "腰椎", "num": "(6)", "jp": "乳頭突起", "en": ["Mammillary process"], "img": "youtsui.jpg"}, {"id": 79, "region": "腰椎", "num": "(7)", "jp": "横突起", "en": ["Transverse process"], "img": "youtsui.jpg"}, {"id": 80, "region": "腰椎", "num": "(8)", "jp": "椎弓", "en": ["Vertebral arch"], "img": "youtsui.jpg"}, {"id": 81, "region": "仙骨と尾骨 1 (前面)", "num": "(1)", "jp": "仙骨翼", "en": ["Ala of sacrum", "Wing of sacrum"], "img": "senkotsu1.jpg"}, {"id": 82, "region": "仙骨と尾骨 1 (前面)", "num": "(2)", "jp": "仙尾関節", "en": ["Sacrococcygeal joint"], "img": "senkotsu1.jpg"}, {"id": 83, "region": "仙骨と尾骨 1 (前面)", "num": "(3)", "jp": "仙骨尖", "en": ["Apex of sacrum"], "img": "senkotsu1.jpg"}, {"id": 84, "region": "仙骨と尾骨 1 (前面)", "num": "(4)", "jp": "前仙骨孔", "en": ["Anterior sacral foramina"], "img": "senkotsu1.jpg"}, {"id": 85, "region": "仙骨と尾骨 1 (前面)", "num": "(5)", "jp": "岬角", "en": ["Promontory"], "img": "senkotsu1.jpg"}, {"id": 86, "region": "仙骨と尾骨 2 (後面)", "num": "(1)", "jp": "仙骨管", "en": ["Sacral canal"], "img": "senkotsu2.jpg"}, {"id": 87, "region": "仙骨と尾骨 2 (後面)", "num": "(2)", "jp": "上関節面", "en": ["Superior articular facet"], "img": "senkotsu2.jpg"}, {"id": 88, "region": "仙骨と尾骨 2 (後面)", "num": "(3)", "jp": "耳状面", "en": ["Auricular surface"], "img": "senkotsu2.jpg"}, {"id": 89, "region": "仙骨と尾骨 2 (後面)", "num": "(4)", "jp": "正中仙骨稜", "en": ["Median sacral crest"], "img": "senkotsu2.jpg"}, {"id": 90, "region": "仙骨と尾骨 2 (後面)", "num": "(5)", "jp": "仙骨裂孔", "en": ["Sacral hiatus"], "img": "senkotsu2.jpg"}, {"id": 91, "region": "仙骨と尾骨 2 (後面)", "num": "(6)", "jp": "仙骨角", "en": ["Sacral cornua", "Sacral horn"], "img": "senkotsu2.jpg"}, {"id": 92, "region": "仙骨と尾骨 2 (後面)", "num": "(7)", "jp": "尾骨", "en": ["Coccyx"], "img": "senkotsu2.jpg"}, {"id": 93, "region": "胸部の骨格", "num": "(1)", "jp": "鎖骨切痕", "en": ["Clavicular notch"], "img": "kyoubu.jpg"}, {"id": 94, "region": "胸部の骨格", "num": "(2)", "jp": "胸郭上口", "en": ["Superior thoracic aperture", "Thoracic inlet", "Thoracic outlet"], "img": "kyoubu.jpg"}, {"id": 95, "region": "胸部の骨格", "num": "(3)", "jp": "頸切痕", "en": ["Jugular notch", "suprasternal notch"], "img": "kyoubu.jpg"}, {"id": 96, "region": "胸部の骨格", "num": "(4)", "jp": "肋軟骨", "en": ["Costal cartilage"], "img": "kyoubu.jpg"}, {"id": 97, "region": "胸部の骨格", "num": "(5)", "jp": "肋骨弓", "en": ["Costal arch"], "img": "kyoubu.jpg"}, {"id": 98, "region": "胸部の骨格", "num": "(6)", "jp": "胸郭下口", "en": ["Inferior thoracic aperture"], "img": "kyoubu.jpg"}, {"id": 99, "region": "胸部の構造", "num": "(1)", "jp": "肋骨角", "en": ["Costal angle"], "img": "kyoubu_kouzou.jpg"}, {"id": 100, "region": "胸部の構造", "num": "(2)", "jp": "肋骨結節", "en": ["Costal tubercle", "Tubercle of rib"], "img": "kyoubu_kouzou.jpg"}, {"id": 101, "region": "胸部の構造", "num": "(3)", "jp": "肋骨頭", "en": ["Head of rib"], "img": "kyoubu_kouzou.jpg"}, {"id": 102, "region": "胸部の構造", "num": "(4)", "jp": "肋骨頸", "en": ["Neck of rib"], "img": "kyoubu_kouzou.jpg"}, {"id": 103, "region": "胸骨", "num": "(1)", "jp": "頸切痕", "en": ["Jugular notch"], "img": "kyoukotsu.jpg"}, {"id": 104, "region": "胸骨", "num": "(2)", "jp": "胸骨柄", "en": ["Manubrium of sternum"], "img": "kyoukotsu.jpg"}, {"id": 105, "region": "胸骨", "num": "(3)", "jp": "胸骨角", "en": ["Sternal angle"], "img": "kyoukotsu.jpg"}, {"id": 106, "region": "胸骨", "num": "(4)", "jp": "胸骨体", "en": ["Body of sternum"], "img": "kyoukotsu.jpg"}, {"id": 107, "region": "胸骨", "num": "(5)", "jp": "剣状突起", "en": ["Xiphoid process"], "img": "kyoukotsu.jpg"}, {"id": 108, "region": "胸骨", "num": "(6)", "jp": "鎖骨切痕", "en": ["Clavicular notch"], "img": "kyoukotsu.jpg"}, {"id": 109, "region": "上肢の骨格", "num": "(1)", "jp": "上肢帯", "en": ["Shoulder girdle"], "img": "joushi.jpg"}, {"id": 110, "region": "上肢の骨格", "num": "(2)", "jp": "上腕骨", "en": ["Humerus"], "img": "joushi.jpg"}, {"id": 111, "region": "上肢の骨格", "num": "(3)", "jp": "橈骨", "en": ["Radius"], "img": "joushi.jpg"}, {"id": 112, "region": "上肢の骨格", "num": "(4)", "jp": "尺骨", "en": ["Ulna"], "img": "joushi.jpg"}, {"id": 113, "region": "上肢の骨格", "num": "(5)", "jp": "指骨(指節骨)", "en": ["Phalanges"], "img": "joushi.jpg"}, {"id": 114, "region": "上肢の骨格", "num": "(6)", "jp": "中手骨", "en": ["Metacarpals"], "img": "joushi.jpg"}, {"id": 115, "region": "上肢の骨格", "num": "(7)", "jp": "手根骨", "en": ["Carpal bones"], "img": "joushi.jpg"}, {"id": 116, "region": "上肢の骨格", "num": "(8)", "jp": "前腕", "en": ["Forearm"], "img": "joushi.jpg"}, {"id": 117, "region": "上肢の骨格", "num": "(9)", "jp": "上腕", "en": ["Arm"], "img": "joushi.jpg"}, {"id": 118, "region": "鎖骨", "num": "(1)", "jp": "肩峰端", "en": ["Acromial end"], "img": "sakotsu.jpg"}, {"id": 119, "region": "鎖骨", "num": "(2)", "jp": "鎖骨体", "en": ["Shaft of clavicle", "Body of clavicle"], "img": "sakotsu.jpg"}, {"id": 120, "region": "鎖骨", "num": "(3)", "jp": "胸骨関節面", "en": ["Sternal articular surface", "Sternal facet"], "img": "sakotsu.jpg"}, {"id": 121, "region": "鎖骨", "num": "(4)", "jp": "肋鎖靭帯圧痕", "en": ["Impression for costoclavicular ligament"], "img": "sakotsu.jpg"}, {"id": 122, "region": "鎖骨", "num": "(5)", "jp": "円錐靭帯結節", "en": ["Conoid tubercle"], "img": "sakotsu.jpg"}, {"id": 123, "region": "鎖骨", "num": "(6)", "jp": "肩峰関節面", "en": ["Acromial articular surface"], "img": "sakotsu.jpg"}, {"id": 124, "region": "鎖骨", "num": "(7)", "jp": "鎖骨下筋溝", "en": ["Groove for subclavius muscle"], "img": "sakotsu.jpg"}, {"id": 125, "region": "肩甲骨 1", "num": "(1)", "jp": "上角", "en": ["Superior angle"], "img": "kenkoukotsu1.jpg"}, {"id": 126, "region": "肩甲骨 1", "num": "(2)", "jp": "肩甲下窩", "en": ["Subscapular fossa"], "img": "kenkoukotsu1.jpg"}, {"id": 127, "region": "肩甲骨 1", "num": "(3)", "jp": "関節下結節", "en": ["Infraglenoid tubercle"], "img": "kenkoukotsu1.jpg"}, {"id": 128, "region": "肩甲骨 1", "num": "(4)", "jp": "関節窩", "en": ["Glenoid cavity"], "img": "kenkoukotsu1.jpg"}, {"id": 129, "region": "肩甲骨 1", "num": "(5)", "jp": "関節上結節", "en": ["Supraglenoid tubercle"], "img": "kenkoukotsu1.jpg"}, {"id": 130, "region": "肩甲骨 1", "num": "(6)", "jp": "肩峰", "en": ["Acromion"], "img": "kenkoukotsu1.jpg"}, {"id": 131, "region": "肩甲骨 1", "num": "(7)", "jp": "烏口突起", "en": ["Coracoid process"], "img": "kenkoukotsu1.jpg"}, {"id": 132, "region": "肩甲骨 2", "num": "(1)", "jp": "肩甲切痕", "en": ["Scapular notch", "Suprascapular notch"], "img": "kenkoukotsu2.jpg"}, {"id": 133, "region": "肩甲骨 2", "num": "(2)", "jp": "肩甲棘", "en": ["Scapular spine", "Spine of scapula"], "img": "kenkoukotsu2.jpg"}, {"id": 134, "region": "肩甲骨 2", "num": "(3)", "jp": "肩峰", "en": ["Acromion"], "img": "kenkoukotsu2.jpg"}, {"id": 135, "region": "肩甲骨 2", "num": "(4)", "jp": "棘下窩", "en": ["Infraspinous fossa"], "img": "kenkoukotsu2.jpg"}, {"id": 136, "region": "肩甲骨 2", "num": "(5)", "jp": "下角", "en": ["Inferior angle"], "img": "kenkoukotsu2.jpg"}, {"id": 137, "region": "肩甲骨 2", "num": "(6)", "jp": "内側縁", "en": ["Medial border"], "img": "kenkoukotsu2.jpg"}, {"id": 138, "region": "肩甲骨 2", "num": "(7)", "jp": "棘上窩", "en": ["Supraspinous fossa"], "img": "kenkoukotsu2.jpg"}, {"id": 139, "region": "上腕骨 1", "num": "(1)", "jp": "結節間溝", "en": ["Intertubercular groove", "Intertubercular sulcus", "bicipital groove"], "img": "jouwankotsu1.jpg"}, {"id": 140, "region": "上腕骨 1", "num": "(2)", "jp": "小結節", "en": ["Lesser tubercle"], "img": "jouwankotsu1.jpg"}, {"id": 141, "region": "上腕骨 1", "num": "(3)", "jp": "解剖頸", "en": ["Anatomical neck"], "img": "jouwankotsu1.jpg"}, {"id": 142, "region": "上腕骨 1", "num": "(4)", "jp": "内側上顆", "en": ["Medial epicondyle"], "img": "jouwankotsu1.jpg"}, {"id": 143, "region": "上腕骨 1", "num": "(5)", "jp": "上腕骨滑車", "en": ["Trochlea"], "img": "jouwankotsu1.jpg"}, {"id": 144, "region": "上腕骨 1", "num": "(6)", "jp": "上腕骨小頭", "en": ["Capitellum", "Capitulum"], "img": "jouwankotsu1.jpg"}, {"id": 145, "region": "上腕骨 1", "num": "(7)", "jp": "三角筋粗面", "en": ["Deltoid tuberosity"], "img": "jouwankotsu1.jpg"}, {"id": 146, "region": "上腕骨 2", "num": "(1)", "jp": "上腕骨頭", "en": ["Head of humerus"], "img": "jouwankotsu2.jpg"}, {"id": 147, "region": "上腕骨 2", "num": "(2)", "jp": "大結節", "en": ["Greater tubercle"], "img": "jouwankotsu2.jpg"}, {"id": 148, "region": "上腕骨 2", "num": "(3)", "jp": "外側顆上稜", "en": ["Lateral supracondylar ridge", "Lateral supraepicondylar ridge"], "img": "jouwankotsu2.jpg"}, {"id": 149, "region": "上腕骨 2", "num": "(4)", "jp": "外側上顆", "en": ["Lateral epicondyle"], "img": "jouwankotsu2.jpg"}, {"id": 150, "region": "上腕骨 2", "num": "(5)", "jp": "肘頭窩", "en": ["Olecranon fossa"], "img": "jouwankotsu2.jpg"}, {"id": 151, "region": "上腕骨 2", "num": "(6)", "jp": "尺骨神経溝", "en": ["Ulnar groove", "groove for ulnar nerve"], "img": "jouwankotsu2.jpg"}, {"id": 152, "region": "上腕骨 2", "num": "(7)", "jp": "外科頸", "en": ["Surgical neck"], "img": "jouwankotsu2.jpg"}, {"id": 153, "region": "肩関節", "num": "(1)", "jp": "外科頸", "en": ["Surgical neck"], "img": "katakansetsu.jpg"}, {"id": 154, "region": "肩関節", "num": "(2)", "jp": "関節窩", "en": ["Glenoid cavity"], "img": "katakansetsu.jpg"}, {"id": 155, "region": "肩関節", "num": "(3)", "jp": "大結節", "en": ["Greater tubercle"], "img": "katakansetsu.jpg"}, {"id": 156, "region": "肩関節", "num": "(4)", "jp": "小結節", "en": ["Lesser tubercle"], "img": "katakansetsu.jpg"}, {"id": 157, "region": "肩関節", "num": "(5)", "jp": "肩峰", "en": ["Acromion"], "img": "katakansetsu.jpg"}, {"id": 158, "region": "肩関節", "num": "(6)", "jp": "烏口突起", "en": ["Coracoid process"], "img": "katakansetsu.jpg"}, {"id": 159, "region": "肩関節", "num": "(7)", "jp": "鎖骨", "en": ["Clavicle"], "img": "katakansetsu.jpg"}, {"id": 160, "region": "橈骨と尺骨", "num": "(1)", "jp": "肘頭", "en": ["Olecranon"], "img": "toukotsu.jpg"}, {"id": 161, "region": "橈骨と尺骨", "num": "(2)", "jp": "鈎状突起", "en": ["Coronoid process"], "img": "toukotsu.jpg"}, {"id": 162, "region": "橈骨と尺骨", "num": "(3)", "jp": "前腕骨間膜", "en": ["Interosseous membrane"], "img": "toukotsu.jpg"}, {"id": 163, "region": "橈骨と尺骨", "num": "(4)", "jp": "橈骨の茎状突起", "en": ["Styloid process of radius", "Styloid process"], "img": "toukotsu.jpg"}, {"id": 164, "region": "橈骨と尺骨", "num": "(5)", "jp": "橈骨粗面", "en": ["Radial tuberosity"], "img": "toukotsu.jpg"}, {"id": 165, "region": "橈骨と尺骨", "num": "(6)", "jp": "橈骨頭", "en": ["Head of radius"], "img": "toukotsu.jpg"}, {"id": 166, "region": "橈骨と尺骨", "num": "(7)", "jp": "上橈尺関節", "en": ["Proximal radioulnar joint"], "img": "toukotsu.jpg"}, {"id": 167, "region": "橈骨と尺骨", "num": "(8)", "jp": "滑車切痕", "en": ["Trochlear notch"], "img": "toukotsu.jpg"}, {"id": 168, "region": "手首と手の骨格 1", "num": "(1)", "jp": "第2中節骨", "en": ["2nd middle phalanx"], "img": "tekubi1.jpg"}, {"id": 169, "region": "手首と手の骨格 1", "num": "(2)", "jp": "第1中手骨", "en": ["1st metacarpal"], "img": "tekubi1.jpg"}, {"id": 170, "region": "手首と手の骨格 1", "num": "(3)", "jp": "小菱形骨", "en": ["Trapezoid"], "img": "tekubi1.jpg"}, {"id": 171, "region": "手首と手の骨格 1", "num": "(4)", "jp": "大菱形骨", "en": ["Trapezium"], "img": "tekubi1.jpg"}, {"id": 172, "region": "手首と手の骨格 1", "num": "(5)", "jp": "舟状骨", "en": ["Scaphoid"], "img": "tekubi1.jpg"}, {"id": 173, "region": "手首と手の骨格 1", "num": "(6)", "jp": "尺骨の茎状突起", "en": ["Styloid process of ulna", "Styloid process"], "img": "tekubi1.jpg"}, {"id": 174, "region": "手首と手の骨格 1", "num": "(7)", "jp": "三角骨", "en": ["Triquetrum"], "img": "tekubi1.jpg"}, {"id": 175, "region": "手首と手の骨格 1", "num": "(8)", "jp": "有鉤骨", "en": ["Hamate"], "img": "tekubi1.jpg"}, {"id": 176, "region": "手首と手の骨格 2", "num": "(1)", "jp": "中手骨の頭", "en": ["Head of metacarpal"], "img": "tekubi2.jpg"}, {"id": 177, "region": "手首と手の骨格 2", "num": "(2)", "jp": "中手骨の底", "en": ["Base of metacarpal"], "img": "tekubi2.jpg"}, {"id": 178, "region": "手首と手の骨格 2", "num": "(3)", "jp": "豆状骨", "en": ["Pisiform"], "img": "tekubi2.jpg"}, {"id": 179, "region": "手首と手の骨格 2", "num": "(4)", "jp": "有鉤骨鉤", "en": ["Hook of hamate"], "img": "tekubi2.jpg"}, {"id": 180, "region": "手首と手の骨格 2", "num": "(5)", "jp": "月状骨", "en": ["Lunate"], "img": "tekubi2.jpg"}, {"id": 181, "region": "手首と手の骨格 2", "num": "(6)", "jp": "橈骨の茎状突起", "en": ["Styloid process of radius"], "img": "tekubi2.jpg"}, {"id": 182, "region": "手首と手の骨格 2", "num": "(7)", "jp": "有頭骨", "en": ["Capitate"], "img": "tekubi2.jpg"}, {"id": 183, "region": "手根骨", "num": "-", "jp": "有頭骨", "en": ["Os Capitatum", "Capitate"], "img": "shukonkotsu.jpg"}, {"id": 184, "region": "手根骨", "num": "-", "jp": "小菱形骨", "en": ["Os Trapezoideum", "Trapezoid"], "img": "shukonkotsu.jpg"}, {"id": 185, "region": "手根骨", "num": "-", "jp": "大菱形骨", "en": ["Os Trapezium", "Trapezium"], "img": "shukonkotsu.jpg"}, {"id": 186, "region": "手根骨", "num": "-", "jp": "舟状骨", "en": ["Os Scaphoideum", "Scaphoid"], "img": "shukonkotsu.jpg"}, {"id": 187, "region": "手根骨", "num": "-", "jp": "月状骨", "en": ["Os Lunatum", "Lunate"], "img": "shukonkotsu.jpg"}, {"id": 188, "region": "手根骨", "num": "-", "jp": "有鉤骨", "en": ["Os Hamatum", "Hamate"], "img": "shukonkotsu.jpg"}, {"id": 189, "region": "手根骨", "num": "-", "jp": "豆状骨", "en": ["Os Pisiforme", "Pisiform"], "img": "shukonkotsu.jpg"}, {"id": 190, "region": "手根骨", "num": "-", "jp": "三角骨", "en": ["Os Triquetrum", "Triquetrum"], "img": "shukonkotsu.jpg"}, {"id": 191, "region": "手首と手の関節", "num": "(1)", "jp": "遠位指節間(DIP)関節", "en": ["Distal interphalangeal joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 192, "region": "手首と手の関節", "num": "(2)", "jp": "近位指節間(PIP)関節", "en": ["Proximal interphalangeal joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 193, "region": "手首と手の関節", "num": "(3)", "jp": "中手指節(MCP)関節", "en": ["Metacarpophalangeal joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 194, "region": "手首と手の関節", "num": "(4)", "jp": "関節円板", "en": ["Ulnocarpal disk"], "img": "tekubi_kansetsu.jpg"}, {"id": 195, "region": "手首と手の関節", "num": "(5)", "jp": "下橈尺関節", "en": ["Distal radioulnar joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 196, "region": "手首と手の関節", "num": "(6)", "jp": "橈骨手根関節", "en": ["Radiocarpal joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 197, "region": "手首と手の関節", "num": "(7)", "jp": "手根中央関節", "en": ["Midcarpal joint"], "img": "tekubi_kansetsu.jpg"}, {"id": 198, "region": "手首と手の関節", "num": "(8)", "jp": "舟状骨", "en": ["Scaphoid"], "img": "tekubi_kansetsu.jpg"}, {"id": 199, "region": "下肢の骨格", "num": "(1)", "jp": "下肢帯", "en": ["Pelvic girdle"], "img": "kashi.jpg"}, {"id": 200, "region": "下肢の骨格", "num": "(2)", "jp": "大腿骨", "en": ["Femur"], "img": "kashi.jpg"}, {"id": 201, "region": "下肢の骨格", "num": "(3)", "jp": "膝蓋骨", "en": ["Patella"], "img": "kashi.jpg"}, {"id": 202, "region": "下肢の骨格", "num": "(4)", "jp": "脛骨", "en": ["Tibia"], "img": "kashi.jpg"}, {"id": 203, "region": "下肢の骨格", "num": "(5)", "jp": "腓骨", "en": ["Fibula"], "img": "kashi.jpg"}, {"id": 204, "region": "下肢の骨格", "num": "(6)", "jp": "足根骨", "en": ["Tarsal bones"], "img": "kashi.jpg"}, {"id": 205, "region": "下肢の骨格", "num": "(7)", "jp": "下腿", "en": ["Lower leg"], "img": "kashi.jpg"}, {"id": 206, "region": "下肢の骨格", "num": "(8)", "jp": "大腿", "en": ["Thigh"], "img": "kashi.jpg"}, {"id": 207, "region": "寛骨 内側面", "num": "(1)", "jp": "腸骨稜", "en": ["Iliac crest"], "img": "kankotsu1.jpg"}, {"id": 208, "region": "寛骨 内側面", "num": "(2)", "jp": "上前腸骨棘", "en": ["Anterior superior iliac spine"], "img": "kankotsu1.jpg"}, {"id": 209, "region": "寛骨 内側面", "num": "(3)", "jp": "弓状線", "en": ["Arcuate line"], "img": "kankotsu1.jpg"}, {"id": 210, "region": "寛骨 内側面", "num": "(4)", "jp": "恥骨筋線", "en": ["Pectineal line"], "img": "kankotsu1.jpg"}, {"id": 211, "region": "寛骨 内側面", "num": "(5)", "jp": "恥骨結節", "en": ["Pubic tubercle"], "img": "kankotsu1.jpg"}, {"id": 212, "region": "寛骨 内側面", "num": "(6)", "jp": "閉鎖孔", "en": ["Obturator foramen"], "img": "kankotsu1.jpg"}, {"id": 213, "region": "寛骨 内側面", "num": "(7)", "jp": "坐骨枝", "en": ["Ischial ramus"], "img": "kankotsu1.jpg"}, {"id": 214, "region": "寛骨 内側面", "num": "(8)", "jp": "坐骨結節", "en": ["Ischial tuberosity"], "img": "kankotsu1.jpg"}, {"id": 215, "region": "寛骨 内側面", "num": "(9)", "jp": "坐骨棘", "en": ["Ischial spine"], "img": "kankotsu1.jpg"}, {"id": 216, "region": "下肢帯", "num": "(1)", "jp": "岬角", "en": ["Promontory"], "img": "kashitai.jpg"}, {"id": 217, "region": "下肢帯", "num": "(2)", "jp": "仙骨翼", "en": ["Ala of sacrum"], "img": "kashitai.jpg"}, {"id": 218, "region": "下肢帯", "num": "(3)", "jp": "腸骨窩", "en": ["Iliac fossa"], "img": "kashitai.jpg"}, {"id": 219, "region": "下肢帯", "num": "(4)", "jp": "恥骨櫛", "en": ["Pecten pubis"], "img": "kashitai.jpg"}, {"id": 220, "region": "下肢帯", "num": "(5)", "jp": "坐骨棘", "en": ["Ischial spine"], "img": "kashitai.jpg"}, {"id": 221, "region": "下肢帯", "num": "(6)", "jp": "仙腸関節", "en": ["Sacroiliac joint"], "img": "kashitai.jpg"}, {"id": 222, "region": "寛骨の構成", "num": "(1)", "jp": "腸骨稜", "en": ["Iliac crest"], "img": "kankotsu_kousei.jpg"}, {"id": 223, "region": "寛骨の構成", "num": "(2)", "jp": "上前腸骨棘", "en": ["Anterior superior iliac spine"], "img": "kankotsu_kousei.jpg"}, {"id": 224, "region": "寛骨の構成", "num": "(3)", "jp": "寛骨臼", "en": ["Acetabulum"], "img": "kankotsu_kousei.jpg"}, {"id": 225, "region": "寛骨の構成", "num": "(4)", "jp": "恥骨結節", "en": ["Pubic tubercle"], "img": "kankotsu_kousei.jpg"}, {"id": 226, "region": "寛骨の構成", "num": "(5)", "jp": "閉鎖孔", "en": ["Obturator foramen"], "img": "kankotsu_kousei.jpg"}, {"id": 227, "region": "寛骨の構成", "num": "(6)", "jp": "坐骨結節", "en": ["Ischial tuberosity"], "img": "kankotsu_kousei.jpg"}, {"id": 228, "region": "寛骨の構成", "num": "(7)", "jp": "坐骨棘", "en": ["Ischial spine"], "img": "kankotsu_kousei.jpg"}, {"id": 229, "region": "寛骨の構成", "num": "(8)", "jp": "大坐骨切痕", "en": ["Greater sciatic notch"], "img": "kankotsu_kousei.jpg"}, {"id": 230, "region": "寛骨の構成", "num": "(9)", "jp": "下後腸骨棘", "en": ["Posterior inferior iliac spine"], "img": "kankotsu_kousei.jpg"}, {"id": 231, "region": "大腿骨", "num": "(1)", "jp": "大転子", "en": ["Greater trochanter"], "img": "daitaikotsu.jpg"}, {"id": 232, "region": "大腿骨", "num": "(2)", "jp": "転子間稜", "en": ["Intertrochanteric crest"], "img": "daitaikotsu.jpg"}, {"id": 233, "region": "大腿骨", "num": "(3)", "jp": "粗線の外側唇", "en": ["Lateral lip of the linea aspera"], "img": "daitaikotsu.jpg"}, {"id": 234, "region": "大腿骨", "num": "(4)", "jp": "粗線の内側唇", "en": ["Medial lip of the linea aspera"], "img": "daitaikotsu.jpg"}, {"id": 235, "region": "大腿骨", "num": "(5)", "jp": "外側顆", "en": ["Lateral condyle"], "img": "daitaikotsu.jpg"}, {"id": 236, "region": "大腿骨", "num": "(6)", "jp": "顆間窩", "en": ["Intercondylar notch"], "img": "daitaikotsu.jpg"}, {"id": 237, "region": "大腿骨", "num": "(7)", "jp": "内側顆", "en": ["Medial condyle"], "img": "daitaikotsu.jpg"}, {"id": 238, "region": "大腿骨", "num": "(8)", "jp": "内側上顆", "en": ["Medial epicondyle"], "img": "daitaikotsu.jpg"}, {"id": 239, "region": "大腿骨", "num": "(9)", "jp": "内転筋結節", "en": ["Adductor tubercle"], "img": "daitaikotsu.jpg"}, {"id": 240, "region": "大腿骨", "num": "(10)", "jp": "小転子", "en": ["Lesser trochanter"], "img": "daitaikotsu.jpg"}, {"id": 241, "region": "大腿骨", "num": "(11)", "jp": "大腿骨頸", "en": ["Neck of femur"], "img": "daitaikotsu.jpg"}, {"id": 242, "region": "大腿骨", "num": "(12)", "jp": "大腿骨頭", "en": ["Head of femur"], "img": "daitaikotsu.jpg"}, {"id": 243, "region": "股関節 1", "num": "(1)", "jp": "寛骨臼縁", "en": ["Bony acetabular rim"], "img": "kokansetsu1.jpg"}, {"id": 244, "region": "股関節 1", "num": "(2)", "jp": "恥骨結節", "en": ["Pubic tubercle"], "img": "kokansetsu1.jpg"}, {"id": 245, "region": "股関節 1", "num": "(3)", "jp": "大腿骨頸", "en": ["Neck of femur"], "img": "kokansetsu1.jpg"}, {"id": 246, "region": "股関節 1", "num": "(4)", "jp": "小転子", "en": ["Lesser trochanter"], "img": "kokansetsu1.jpg"}, {"id": 247, "region": "股関節 1", "num": "(5)", "jp": "大腿骨頭", "en": ["Head of femur"], "img": "kokansetsu1.jpg"}, {"id": 248, "region": "股関節 1", "num": "(6)", "jp": "上前腸骨棘", "en": ["Anterior superior iliac spine"], "img": "kokansetsu1.jpg"}, {"id": 249, "region": "股関節 2", "num": "(1)", "jp": "大転子", "en": ["Greater trochanter"], "img": "kokansetsu2.jpg"}, {"id": 250, "region": "股関節 2", "num": "(2)", "jp": "粗線", "en": ["Linea aspera"], "img": "kokansetsu2.jpg"}, {"id": 251, "region": "股関節 2", "num": "(3)", "jp": "坐骨結節", "en": ["Ischial tuberosity"], "img": "kokansetsu2.jpg"}, {"id": 252, "region": "股関節 2", "num": "(4)", "jp": "坐骨棘", "en": ["Ischial spine"], "img": "kokansetsu2.jpg"}, {"id": 253, "region": "股関節 2", "num": "(5)", "jp": "下後腸骨棘", "en": ["Posterior inferior iliac spine"], "img": "kokansetsu2.jpg"}, {"id": 254, "region": "股関節 2", "num": "(6)", "jp": "上後腸骨棘", "en": ["Posterior superior iliac spine"], "img": "kokansetsu2.jpg"}, {"id": 255, "region": "膝関節 1", "num": "(1)", "jp": "内側上顆", "en": ["Medial epicondyle"], "img": "hizakansetsu1.jpg"}, {"id": 256, "region": "膝関節 1", "num": "(2)", "jp": "大腿骨の内側顆", "en": ["Medial femoral condyle"], "img": "hizakansetsu1.jpg"}, {"id": 257, "region": "膝関節 1", "num": "(3)", "jp": "脛骨の内側顆", "en": ["Medial tibial condyle"], "img": "hizakansetsu1.jpg"}, {"id": 258, "region": "膝関節 1", "num": "(4)", "jp": "脛骨粗面", "en": ["Tibial tuberosity"], "img": "hizakansetsu1.jpg"}, {"id": 259, "region": "膝関節 1", "num": "(5)", "jp": "上関節面", "en": ["Tibial plateau"], "img": "hizakansetsu1.jpg"}, {"id": 260, "region": "膝関節 1", "num": "(6)", "jp": "大腿骨の外側顆", "en": ["Lateral femoral condyle"], "img": "hizakansetsu1.jpg"}, {"id": 261, "region": "膝関節 1", "num": "(7)", "jp": "膝蓋骨", "en": ["Patella"], "img": "hizakansetsu1.jpg"}, {"id": 262, "region": "膝関節 2", "num": "(1)", "jp": "顆間窩", "en": ["Intercondylar notch"], "img": "hizakansetsu2.jpg"}, {"id": 263, "region": "膝関節 2", "num": "(2)", "jp": "大腿骨の外側顆", "en": ["Lateral femoral condyle"], "img": "hizakansetsu2.jpg"}, {"id": 264, "region": "膝関節 2", "num": "(3)", "jp": "顆間隆起", "en": ["Intercondylar eminence"], "img": "hizakansetsu2.jpg"}, {"id": 265, "region": "膝関節 2", "num": "(4)", "jp": "脛骨の内側顆", "en": ["Medial tibial condyle"], "img": "hizakansetsu2.jpg"}, {"id": 266, "region": "膝関節 2", "num": "(5)", "jp": "大腿骨の内側顆", "en": ["Medial femoral condyle"], "img": "hizakansetsu2.jpg"}, {"id": 267, "region": "膝関節 2", "num": "(6)", "jp": "内側上顆", "en": ["Medial epicondyle"], "img": "hizakansetsu2.jpg"}, {"id": 268, "region": "脛骨と腓骨", "num": "(1)", "jp": "上関節面", "en": ["Tibial plateau"], "img": "keikotsu_hikotsu.jpg"}, {"id": 269, "region": "脛骨と腓骨", "num": "(2)", "jp": "内側顆", "en": ["Medial condyle"], "img": "keikotsu_hikotsu.jpg"}, {"id": 270, "region": "脛骨と腓骨", "num": "(3)", "jp": "脛骨粗面", "en": ["Tibial tuberosity"], "img": "keikotsu_hikotsu.jpg"}, {"id": 271, "region": "脛骨と腓骨", "num": "(4)", "jp": "内果", "en": ["Medial malleolus"], "img": "keikotsu_hikotsu.jpg"}, {"id": 272, "region": "脛骨と腓骨", "num": "(5)", "jp": "足関節窩", "en": ["Ankle mortise"], "img": "keikotsu_hikotsu.jpg"}, {"id": 273, "region": "脛骨と腓骨", "num": "(6)", "jp": "外果", "en": ["Lateral malleolus"], "img": "keikotsu_hikotsu.jpg"}, {"id": 274, "region": "脛骨と腓骨", "num": "(7)", "jp": "下腿骨間膜", "en": ["Interosseous membrane"], "img": "keikotsu_hikotsu.jpg"}, {"id": 275, "region": "脛骨と腓骨", "num": "(8)", "jp": "腓骨頭", "en": ["Head of fibula"], "img": "keikotsu_hikotsu.jpg"}, {"id": 276, "region": "脛骨と腓骨", "num": "(9)", "jp": "脛腓関節", "en": ["Tibiofibular joint"], "img": "keikotsu_hikotsu.jpg"}, {"id": 277, "region": "足の骨格 1", "num": "(1)", "jp": "外側楔状骨", "en": ["Lateral cuneiform"], "img": "ashi1.jpg"}, {"id": 278, "region": "足の骨格 1", "num": "(2)", "jp": "立方骨", "en": ["Cuboid"], "img": "ashi1.jpg"}, {"id": 279, "region": "足の骨格 1", "num": "(3)", "jp": "距骨頭", "en": ["Head of talus"], "img": "ashi1.jpg"}, {"id": 280, "region": "足の骨格 1", "num": "(4)", "jp": "舟状骨", "en": ["Navicular"], "img": "ashi1.jpg"}, {"id": 281, "region": "足の骨格 1", "num": "(5)", "jp": "内側楔状骨", "en": ["Medial cuneiform"], "img": "ashi1.jpg"}, {"id": 282, "region": "足の骨格 1", "num": "(6)", "jp": "第1中足骨底", "en": ["Base of 1st metatarsal"], "img": "ashi1.jpg"}, {"id": 283, "region": "足の骨格 1", "num": "(7)", "jp": "第1中足骨頭", "en": ["Head of 1st metatarsal"], "img": "ashi1.jpg"}, {"id": 284, "region": "足の骨格 1", "num": "(8)", "jp": "第1末節骨", "en": ["1st distal phalanx"], "img": "ashi1.jpg"}, {"id": 285, "region": "足の骨格 2", "num": "(1)", "jp": "第1基節骨", "en": ["1st proximal phalanx"], "img": "ashi2.jpg"}, {"id": 286, "region": "足の骨格 2", "num": "(2)", "jp": "種子骨", "en": ["Sesamoids", "sesamoid bones"], "img": "ashi2.jpg"}, {"id": 287, "region": "足の骨格 2", "num": "(3)", "jp": "内側楔状骨", "en": ["Medial cuneiform"], "img": "ashi2.jpg"}, {"id": 288, "region": "足の骨格 2", "num": "(4)", "jp": "舟状骨", "en": ["Navicular"], "img": "ashi2.jpg"}, {"id": 289, "region": "足の骨格 2", "num": "(5)", "jp": "載距突起", "en": ["Sustentaculum tali", "talar shelf"], "img": "ashi2.jpg"}, {"id": 290, "region": "足の骨格 2", "num": "(6)", "jp": "踵骨", "en": ["Calcaneus"], "img": "ashi2.jpg"}, {"id": 291, "region": "足の骨格 2", "num": "(7)", "jp": "長腓骨筋腱溝", "en": ["Groove for fibularis longus tendon", "Groove for tendon of fibularis longus", "Groove for tenndn of peroneus longus"], "img": "ashi2.jpg"}, {"id": 292, "region": "足の骨格 2", "num": "(8)", "jp": "第5中足骨粗面", "en": ["Tuberosity of 5th metatarsal"], "img": "ashi2.jpg"}, {"id": 293, "region": "足首と足の関節 2", "num": "(1)", "jp": "脛骨", "en": ["Tibia"], "img": "ashikubi.jpg"}, {"id": 294, "region": "足首と足の関節 2", "num": "(2)", "jp": "距腿関節", "en": ["Talocrural joint"], "img": "ashikubi.jpg"}, {"id": 295, "region": "足首と足の関節 2", "num": "(3)", "jp": "舟状骨", "en": ["Navicular"], "img": "ashikubi.jpg"}, {"id": 296, "region": "足首と足の関節 2", "num": "(4)", "jp": "種子骨", "en": ["Sesamoids", "sesamoid bones"], "img": "ashikubi.jpg"}, {"id": 297, "region": "足首と足の関節 2", "num": "(5)", "jp": "載距突起", "en": ["Sustentaculum tali"], "img": "ashikubi.jpg"}, {"id": 298, "region": "足首と足の関節 2", "num": "(6)", "jp": "距骨下関節", "en": ["Subtalar joint"], "img": "ashikubi.jpg"}, {"id": 299, "region": "足首と足の関節 2", "num": "(7)", "jp": "距骨", "en": ["Talus"], "img": "ashikubi.jpg"}, {"id": 300, "region": "足首と足の関節 2", "num": "(8)", "jp": "外果", "en": ["Lateral malleolus"], "img": "ashikubi.jpg"}];
+        const allQuestions = [{"region": "頸椎 1","num": "(1)","jp": "環椎後弓","en": ["Posterior arch of atlas","Posterior arch"],"img": "keitsui1.jpg","id": 1},{"region": "頸椎 1","num": "(2)","jp": "棘突起","en": ["Spinous process"],"img": "keitsui1.jpg","id": 2},{"region": "頸椎 1","num": "(3)","jp": "横突孔","en": ["Transverse foramen"],"img": "keitsui1.jpg","id": 3},{"region": "頸椎 1","num": "(4)","jp": "第7頸椎(隆椎)","en": ["C7 vertebra","C7 vertebra (vertebra prominens)"],"img": "keitsui1.jpg","id": 4},{"region": "頸椎 1","num": "(5)","jp": "鈎状突起","en": ["Uncinate process","Uncus of body"],"img": "keitsui1.jpg","id": 5},{"region": "頸椎 1","num": "(6)","jp": "脊髄神経溝","en": ["Sulcus for spinal nerve"],"img": "keitsui1.jpg","id": 6},{"region": "頸椎 1","num": "(7)","jp": "第2頸椎(軸椎)","en": ["C2 vertebra","C2 vertebra (axis)","axis"],"img": "keitsui1.jpg","id": 7},{"region": "頸椎 2","num": "(1)","jp": "後結節","en": ["Posterior tubercle"],"img": "keitsui2.jpg","id": 8},{"region": "頸椎 2","num": "(2)","jp": "椎骨動脈溝","en": ["Groove for vertebral artery"],"img": "keitsui2.jpg","id": 9},{"region": "頸椎 2","num": "(3)","jp": "横突起","en": ["Transverse process"],"img": "keitsui2.jpg","id": 10},{"region": "頸椎 2","num": "(4)","jp": "前結節","en": ["Anterior tubercle"],"img": "keitsui2.jpg","id": 11},{"region": "頸椎 2","num": "(5)","jp": "歯突起窩","en": ["Facet for dens"],"img": "keitsui2.jpg","id": 12},{"region": "頸椎 2","num": "(6)","jp": "後弓","en": ["Posterior arch"],"img": "keitsui2.jpg","id": 13},{"region": "頸椎 2","num": "(7)","jp": "外側塊","en": ["Lateral masses"],"img": "keitsui2.jpg","id": 14},{"region": "頸椎 3","num": "(1)","jp": "歯突起","en": ["Dens"],"img": "keitsui3.jpg","id": 15},{"region": "頸椎 3","num": "(2)","jp": "椎弓","en": ["Vertebral arch"],"img": "keitsui3.jpg","id": 16},{"region": "頸椎 3","num": "(3)","jp": "下関節面","en": ["Inferior articular facet"],"img": "keitsui3.jpg","id": 17},{"region": "頸椎 3","num": "(4)","jp": "横突孔","en": ["Transverse foramen"],"img": "keitsui3.jpg","id": 18},{"region": "頸椎 3","num": "(5)","jp": "前関節面","en": ["Anterior articular facet"],"img": "keitsui3.jpg","id": 19},{"region": "頸椎 4","num": "(1)","jp": "棘突起","en": ["Spinous process"],"img": "keitsui4.jpg","id": 20},{"region": "頸椎 4","num": "(2)","jp": "上関節面","en": ["Superior articular facet"],"img": "keitsui4.jpg","id": 21},{"region": "頸椎 4","num": "(3)","jp": "横突孔","en": ["Transverse foramen"],"img": "keitsui4.jpg","id": 22},{"region": "頸椎 4","num": "(4)","jp": "横突起,脊髄神経溝","en": ["Transverse process with sulcus for spinal nerve"],"img": "keitsui4.jpg","id": 23},{"region": "頸椎 4","num": "(5)","jp": "椎弓板","en": ["Lamina of vertebral arch","Lamina"],"img": "keitsui4.jpg","id": 24},{"region": "胸椎","num": "(1)","jp": "上肋骨窩","en": ["Superior costal facet"],"img": "kyoutsui.jpg","id": 25},{"region": "胸椎","num": "(2)","jp": "椎体","en": ["Vertebral body"],"img": "kyoutsui.jpg","id": 26},{"region": "胸椎","num": "(3)","jp": "下関節面","en": ["Inferior articular facet"],"img": "kyoutsui.jpg","id": 27},{"region": "胸椎","num": "(4)","jp": "棘突起","en": ["Spinous process"],"img": "kyoutsui.jpg","id": 28},{"region": "胸椎","num": "(5)","jp": "椎弓板","en": ["Lamina of vertebral arch","Lamina"],"img": "kyoutsui.jpg","id": 29},{"region": "胸椎","num": "(6)","jp": "上関節面","en": ["Superior articular facet"],"img": "kyoutsui.jpg","id": 30},{"region": "胸椎","num": "(7)","jp": "椎弓根","en": ["Pedicle of vertebral arch","Pedicle"],"img": "kyoutsui.jpg","id": 31},{"region": "胸椎","num": "(8)","jp": "横突肋骨窩","en": ["Costal facet on transverse process","Transverse costal facet"],"img": "kyoutsui.jpg","id": 32},{"region": "腰椎","num": "(1)","jp": "上関節突起","en": ["Superior articular process"],"img": "youtsui.jpg","id": 33},{"region": "腰椎","num": "(2)","jp": "棘突起","en": ["Spinous process"],"img": "youtsui.jpg","id": 34},{"region": "腰椎","num": "(3)","jp": "下関節面","en": ["Inferior articular facet"],"img": "youtsui.jpg","id": 35},{"region": "腰椎","num": "(4)","jp": "下椎切痕","en": ["Inferior vertebral notch"],"img": "youtsui.jpg","id": 36},{"region": "腰椎","num": "(5)","jp": "上関節面","en": ["Superior articular facet"],"img": "youtsui.jpg","id": 37},{"region": "腰椎","num": "(6)","jp": "乳頭突起","en": ["Mammillary process"],"img": "youtsui.jpg","id": 38},{"region": "腰椎","num": "(7)","jp": "横突起","en": ["Transverse process"],"img": "youtsui.jpg","id": 39},{"region": "腰椎","num": "(8)","jp": "椎弓","en": ["Vertebral arch"],"img": "youtsui.jpg","id": 40},{"region": "仙骨と尾骨 1 (前面)","num": "(1)","jp": "仙骨翼","en": ["Ala of sacrum","Wing of sacrum"],"img": "senkotsu1.jpg","id": 41},{"region": "仙骨と尾骨 1 (前面)","num": "(2)","jp": "仙尾関節","en": ["Sacrococcygeal joint"],"img": "senkotsu1.jpg","id": 42},{"region": "仙骨と尾骨 1 (前面)","num": "(3)","jp": "仙骨尖","en": ["Apex of sacrum"],"img": "senkotsu1.jpg","id": 43},{"region": "仙骨と尾骨 1 (前面)","num": "(4)","jp": "前仙骨孔","en": ["Anterior sacral foramina"],"img": "senkotsu1.jpg","id": 44},{"region": "仙骨と尾骨 1 (前面)","num": "(5)","jp": "岬角","en": ["Promontory"],"img": "senkotsu1.jpg","id": 45},{"region": "仙骨と尾骨 2 (後面)","num": "(1)","jp": "仙骨管","en": ["Sacral canal"],"img": "senkotsu2.jpg","id": 46},{"region": "仙骨と尾骨 2 (後面)","num": "(2)","jp": "上関節面","en": ["Superior articular facet"],"img": "senkotsu2.jpg","id": 47},{"region": "仙骨と尾骨 2 (後面)","num": "(3)","jp": "耳状面","en": ["Auricular surface"],"img": "senkotsu2.jpg","id": 48},{"region": "仙骨と尾骨 2 (後面)","num": "(4)","jp": "正中仙骨稜","en": ["Median sacral crest"],"img": "senkotsu2.jpg","id": 49},{"region": "仙骨と尾骨 2 (後面)","num": "(5)","jp": "仙骨裂孔","en": ["Sacral hiatus"],"img": "senkotsu2.jpg","id": 50},{"region": "仙骨と尾骨 2 (後面)","num": "(6)","jp": "仙骨角","en": ["Sacral cornua","Sacral horn"],"img": "senkotsu2.jpg","id": 51},{"region": "仙骨と尾骨 2 (後面)","num": "(7)","jp": "尾骨","en": ["Coccyx"],"img": "senkotsu2.jpg","id": 52},{"region": "胸部の骨格","num": "(1)","jp": "鎖骨切痕","en": ["Clavicular notch"],"img": "kyoubu.jpg","id": 53},{"region": "胸部の骨格","num": "(2)","jp": "胸郭上口","en": ["Superior thoracic aperture","Thoracic inlet","Thoracic outlet"],"img": "kyoubu.jpg","id": 54},{"region": "胸部の骨格","num": "(3)","jp": "頸切痕","en": ["Jugular notch","suprasternal notch"],"img": "kyoubu.jpg","id": 55},{"region": "胸部の骨格","num": "(4)","jp": "肋軟骨","en": ["Costal cartilage"],"img": "kyoubu.jpg","id": 56},{"region": "胸部の骨格","num": "(5)","jp": "肋骨弓","en": ["Costal arch"],"img": "kyoubu.jpg","id": 57},{"region": "胸部の骨格","num": "(6)","jp": "胸郭下口","en": ["Inferior thoracic aperture"],"img": "kyoubu.jpg","id": 58},{"region": "胸部の構造","num": "(1)","jp": "肋骨角","en": ["Costal angle"],"img": "kyoubu_kouzou.jpg","id": 59},{"region": "胸部の構造","num": "(2)","jp": "肋骨結節","en": ["Costal tubercle","Tubercle of rib"],"img": "kyoubu_kouzou.jpg","id": 60},{"region": "胸部の構造","num": "(3)","jp": "肋骨頭","en": ["Head of rib"],"img": "kyoubu_kouzou.jpg","id": 61},{"region": "胸部の構造","num": "(4)","jp": "肋骨頸","en": ["Neck of rib"],"img": "kyoubu_kouzou.jpg","id": 62},{"region": "胸骨","num": "(1)","jp": "頸切痕","en": ["Jugular notch"],"img": "kyoukotsu.jpg","id": 63},{"region": "胸骨","num": "(2)","jp": "胸骨柄","en": ["Manubrium of sternum"],"img": "kyoukotsu.jpg","id": 64},{"region": "胸骨","num": "(3)","jp": "胸骨角","en": ["Sternal angle"],"img": "kyoukotsu.jpg","id": 65},{"region": "胸骨","num": "(4)","jp": "胸骨体","en": ["Body of sternum"],"img": "kyoukotsu.jpg","id": 66},{"region": "胸骨","num": "(5)","jp": "剣状突起","en": ["Xiphoid process"],"img": "kyoukotsu.jpg","id": 67},{"region": "胸骨","num": "(6)","jp": "鎖骨切痕","en": ["Clavicular notch"],"img": "kyoukotsu.jpg","id": 68},{"region": "上肢の骨格","num": "(1)","jp": "上肢帯","en": ["Shoulder girdle"],"img": "joushi.jpg","id": 69},{"region": "上肢の骨格","num": "(2)","jp": "上腕骨","en": ["Humerus"],"img": "joushi.jpg","id": 70},{"region": "上肢の骨格","num": "(3)","jp": "橈骨","en": ["Radius"],"img": "joushi.jpg","id": 71},{"region": "上肢の骨格","num": "(4)","jp": "尺骨","en": ["Ulna"],"img": "joushi.jpg","id": 72},{"region": "上肢の骨格","num": "(5)","jp": "指骨(指節骨)","en": ["Phalanges"],"img": "joushi.jpg","id": 73},{"region": "上肢の骨格","num": "(6)","jp": "中手骨","en": ["Metacarpals"],"img": "joushi.jpg","id": 74},{"region": "上肢の骨格","num": "(7)","jp": "手根骨","en": ["Carpal bones"],"img": "joushi.jpg","id": 75},{"region": "上肢の骨格","num": "(8)","jp": "前腕","en": ["Forearm"],"img": "joushi.jpg","id": 76},{"region": "上肢の骨格","num": "(9)","jp": "上腕","en": ["Arm"],"img": "joushi.jpg","id": 77},{"region": "鎖骨","num": "(1)","jp": "肩峰端","en": ["Acromial end"],"img": "sakotsu.jpg","id": 78},{"region": "鎖骨","num": "(2)","jp": "鎖骨体","en": ["Shaft of clavicle","Body of clavicle"],"img": "sakotsu.jpg","id": 79},{"region": "鎖骨","num": "(3)","jp": "胸骨関節面","en": ["Sternal articular surface","Sternal facet"],"img": "sakotsu.jpg","id": 80},{"region": "鎖骨","num": "(4)","jp": "肋鎖靭帯圧痕","en": ["Impression for costoclavicular ligament"],"img": "sakotsu.jpg","id": 81},{"region": "鎖骨","num": "(5)","jp": "鎖骨下筋溝","en": ["Groove for subclavius muscle"],"img": "sakotsu.jpg","id": 82},{"region": "鎖骨","num": "(6)","jp": "円錐靭帯結節","en": ["Conoid tubercle"],"img": "sakotsu.jpg","id": 83},{"region": "鎖骨","num": "(7)","jp": "肩峰関節面","en": ["Acromial articular surface"],"img": "sakotsu.jpg","id": 84},{"region": "肩甲骨 1","num": "(1)","jp": "上角","en": ["Superior angle"],"img": "kenkoukotsu1.jpg","id": 85},{"region": "肩甲骨 1","num": "(2)","jp": "肩甲下窩","en": ["Subscapular fossa"],"img": "kenkoukotsu1.jpg","id": 86},{"region": "肩甲骨 1","num": "(3)","jp": "関節下結節","en": ["Infraglenoid tubercle"],"img": "kenkoukotsu1.jpg","id": 87},{"region": "肩甲骨 1","num": "(4)","jp": "関節窩","en": ["Glenoid cavity"],"img": "kenkoukotsu1.jpg","id": 88},{"region": "肩甲骨 1","num": "(5)","jp": "関節上結節","en": ["Supraglenoid tubercle"],"img": "kenkoukotsu1.jpg","id": 89},{"region": "肩甲骨 1","num": "(6)","jp": "肩峰","en": ["Acromion"],"img": "kenkoukotsu1.jpg","id": 90},{"region": "肩甲骨 1","num": "(7)","jp": "烏口突起","en": ["Coracoid process"],"img": "kenkoukotsu1.jpg","id": 91},{"region": "肩甲骨 2","num": "(1)","jp": "肩甲切痕","en": ["Scapular notch","Suprascapular notch"],"img": "kenkoukotsu2.jpg","id": 92},{"region": "肩甲骨 2","num": "(2)","jp": "肩甲棘","en": ["Scapular spine","Spine of scapula"],"img": "kenkoukotsu2.jpg","id": 93},{"region": "肩甲骨 2","num": "(3)","jp": "肩峰","en": ["Acromion"],"img": "kenkoukotsu2.jpg","id": 94},{"region": "肩甲骨 2","num": "(4)","jp": "棘下窩","en": ["Infraspinous fossa"],"img": "kenkoukotsu2.jpg","id": 95},{"region": "肩甲骨 2","num": "(5)","jp": "下角","en": ["Inferior angle"],"img": "kenkoukotsu2.jpg","id": 96},{"region": "肩甲骨 2","num": "(6)","jp": "内側縁","en": ["Medial border"],"img": "kenkoukotsu2.jpg","id": 97},{"region": "肩甲骨 2","num": "(7)","jp": "棘上窩","en": ["Supraspinous fossa"],"img": "kenkoukotsu2.jpg","id": 98},{"region": "上腕骨 1","num": "(1)","jp": "結節間溝","en": ["Intertubercular groove","Intertubercular sulcus","bicipital groove"],"img": "jouwankotsu1.jpg","id": 99},{"region": "上腕骨 1","num": "(2)","jp": "小結節","en": ["Lesser tubercle"],"img": "jouwankotsu1.jpg","id": 100},{"region": "上腕骨 1","num": "(3)","jp": "解剖頸","en": ["Anatomical neck"],"img": "jouwankotsu1.jpg","id": 101},{"region": "上腕骨 1","num": "(4)","jp": "内側上顆","en": ["Medial epicondyle"],"img": "jouwankotsu1.jpg","id": 102},{"region": "上腕骨 1","num": "(5)","jp": "上腕骨滑車","en": ["Trochlea"],"img": "jouwankotsu1.jpg","id": 103},{"region": "上腕骨 1","num": "(6)","jp": "上腕骨小頭","en": ["Capitellum","Capitulum"],"img": "jouwankotsu1.jpg","id": 104},{"region": "上腕骨 1","num": "(7)","jp": "三角筋粗面","en": ["Deltoid tuberosity"],"img": "jouwankotsu1.jpg","id": 105},{"region": "上腕骨 2","num": "(1)","jp": "上腕骨頭","en": ["Head of humerus"],"img": "jouwankotsu2.jpg","id": 106},{"region": "上腕骨 2","num": "(2)","jp": "大結節","en": ["Greater tubercle"],"img": "jouwankotsu2.jpg","id": 107},{"region": "上腕骨 2","num": "(3)","jp": "外側顆上稜","en": ["Lateral supracondylar ridge","Lateral supraepicondylar ridge"],"img": "jouwankotsu2.jpg","id": 108},{"region": "上腕骨 2","num": "(4)","jp": "外側上顆","en": ["Lateral epicondyle"],"img": "jouwankotsu2.jpg","id": 109},{"region": "上腕骨 2","num": "(5)","jp": "肘頭窩","en": ["Olecranon fossa"],"img": "jouwankotsu2.jpg","id": 110},{"region": "上腕骨 2","num": "(6)","jp": "尺骨神経溝","en": ["Ulnar groove","groove for ulnar nerve"],"img": "jouwankotsu2.jpg","id": 111},{"region": "上腕骨 2","num": "(7)","jp": "外科頸","en": ["Surgical neck"],"img": "jouwankotsu2.jpg","id": 112},{"region": "肩関節","num": "(1)","jp": "外科頸","en": ["Surgical neck"],"img": "katakansetsu.jpg","id": 113},{"region": "肩関節","num": "(2)","jp": "関節窩","en": ["Glenoid cavity"],"img": "katakansetsu.jpg","id": 114},{"region": "肩関節","num": "(3)","jp": "大結節","en": ["Greater tubercle"],"img": "katakansetsu.jpg","id": 115},{"region": "肩関節","num": "(4)","jp": "小結節","en": ["Lesser tubercle"],"img": "katakansetsu.jpg","id": 116},{"region": "肩関節","num": "(5)","jp": "肩峰","en": ["Acromion"],"img": "katakansetsu.jpg","id": 117},{"region": "肩関節","num": "(6)","jp": "烏口突起","en": ["Coracoid process"],"img": "katakansetsu.jpg","id": 118},{"region": "肩関節","num": "(7)","jp": "鎖骨","en": ["Clavicle"],"img": "katakansetsu.jpg","id": 119},{"region": "橈骨と尺骨","num": "(1)","jp": "肘頭","en": ["Olecranon"],"img": "toukotsu.jpg","id": 120},{"region": "橈骨と尺骨","num": "(2)","jp": "鈎状突起","en": ["Coronoid process"],"img": "toukotsu.jpg","id": 121},{"region": "橈骨と尺骨","num": "(3)","jp": "前腕骨間膜","en": ["Interosseous membrane"],"img": "toukotsu.jpg","id": 122},{"region": "橈骨と尺骨","num": "(4)","jp": "橈骨の茎状突起","en": ["Styloid process of radius","Styloid process"],"img": "toukotsu.jpg","id": 123},{"region": "橈骨と尺骨","num": "(5)","jp": "橈骨粗面","en": ["Radial tuberosity"],"img": "toukotsu.jpg","id": 124},{"region": "橈骨と尺骨","num": "(6)","jp": "橈骨頭","en": ["Head of radius"],"img": "toukotsu.jpg","id": 125},{"region": "橈骨と尺骨","num": "(7)","jp": "上橈尺関節","en": ["Proximal radioulnar joint"],"img": "toukotsu.jpg","id": 126},{"region": "橈骨と尺骨","num": "(8)","jp": "滑車切痕","en": ["Trochlear notch"],"img": "toukotsu.jpg","id": 127},{"region": "手首と手の骨格 1","num": "(1)","jp": "第2中節骨","en": ["2nd middle phalanx"],"img": "tekubi1.jpg","id": 128},{"region": "手首と手の骨格 1","num": "(2)","jp": "第1中手骨","en": ["1st metacarpal"],"img": "tekubi1.jpg","id": 129},{"region": "手首と手の骨格 1","num": "(3)","jp": "小菱形骨","en": ["Trapezoid"],"img": "tekubi1.jpg","id": 130},{"region": "手首と手の骨格 1","num": "(4)","jp": "大菱形骨","en": ["Trapezium"],"img": "tekubi1.jpg","id": 131},{"region": "手首と手の骨格 1","num": "(5)","jp": "舟状骨","en": ["Scaphoid"],"img": "tekubi1.jpg","id": 132},{"region": "手首と手の骨格 1","num": "(6)","jp": "尺骨の茎状突起","en": ["Styloid process of ulna","Styloid process"],"img": "tekubi1.jpg","id": 133},{"region": "手首と手の骨格 1","num": "(7)","jp": "三角骨","en": ["Triquetrum"],"img": "tekubi1.jpg","id": 134},{"region": "手首と手の骨格 1","num": "(8)","jp": "有鉤骨","en": ["Hamate"],"img": "tekubi1.jpg","id": 135},{"region": "手首と手の骨格 2","num": "(1)","jp": "中手骨の頭","en": ["Head of metacarpal"],"img": "tekubi2.jpg","id": 136},{"region": "手首と手の骨格 2","num": "(2)","jp": "中手骨の底","en": ["Base of metacarpal"],"img": "tekubi2.jpg","id": 137},{"region": "手首と手の骨格 2","num": "(3)","jp": "豆状骨","en": ["Pisiform"],"img": "tekubi2.jpg","id": 138},{"region": "手首と手の骨格 2","num": "(4)","jp": "有鉤骨鉤","en": ["Hook of hamate"],"img": "tekubi2.jpg","id": 139},{"region": "手首と手の骨格 2","num": "(5)","jp": "月状骨","en": ["Lunate"],"img": "tekubi2.jpg","id": 140},{"region": "手首と手の骨格 2","num": "(6)","jp": "橈骨の茎状突起","en": ["Styloid process of radius"],"img": "tekubi2.jpg","id": 141},{"region": "手首と手の骨格 2","num": "(7)","jp": "有頭骨","en": ["Capitate"],"img": "tekubi2.jpg","id": 142},{"region": "手根骨","num": "(19)","jp": "有頭骨","en": ["Os Capitatum","Capitate"],"img": "shukonkotsu.jpg","id": 143},{"region": "手根骨","num": "(18)","jp": "小菱形骨","en": ["Os Trapezoideum","Trapezoid"],"img": "shukonkotsu.jpg","id": 144},{"region": "手根骨","num": "(22)","jp": "大菱形骨","en": ["Os Trapezium","Trapezium"],"img": "shukonkotsu.jpg","id": 145},{"region": "手根骨","num": "(9)","jp": "舟状骨","en": ["Os Scaphoideum","Scaphoid"],"img": "shukonkotsu.jpg","id": 146},{"region": "手根骨","num": "(4)","jp": "月状骨","en": ["Os Lunatum","Lunate"],"img": "shukonkotsu.jpg","id": 147},{"region": "手根骨","num": "(6)","jp": "有鉤骨","en": ["Os Hamatum","Hamate"],"img": "shukonkotsu.jpg","id": 148},{"region": "手根骨","num": "(8)","jp": "豆状骨","en": ["Os Pisiforme","Pisiform"],"img": "shukonkotsu.jpg","id": 149},{"region": "手根骨","num": "(7)","jp": "三角骨","en": ["Os Triquetrum","Triquetrum"],"img": "shukonkotsu.jpg","id": 150},{"region": "手首と手の関節","num": "(1)","jp": "遠位指節間(DIP)関節","en": ["Distal interphalangeal joint"],"img": "tekubi_kansetsu.jpg","id": 151},{"region": "手首と手の関節","num": "(2)","jp": "近位指節間(PIP)関節","en": ["Proximal interphalangeal joint"],"img": "tekubi_kansetsu.jpg","id": 152},{"region": "手首と手の関節","num": "(3)","jp": "中手指節(MCP)関節","en": ["Metacarpophalangeal joint"],"img": "tekubi_kansetsu.jpg","id": 153},{"region": "手首と手の関節","num": "(4)","jp": "関節円板","en": ["Ulnocarpal disk"],"img": "tekubi_kansetsu.jpg","id": 154},{"region": "手首と手の関節","num": "(5)","jp": "下橈尺関節","en": ["Distal radioulnar joint"],"img": "tekubi_kansetsu.jpg","id": 155},{"region": "手首と手の関節","num": "(6)","jp": "橈骨手根関節","en": ["Radiocarpal joint"],"img": "tekubi_kansetsu.jpg","id": 156},{"region": "手首と手の関節","num": "(7)","jp": "手根中央関節","en": ["Midcarpal joint"],"img": "tekubi_kansetsu.jpg","id": 157},{"region": "手首と手の関節","num": "(8)","jp": "舟状骨","en": ["Scaphoid"],"img": "tekubi_kansetsu.jpg","id": 158},{"region": "下肢の骨格","num": "(1)","jp": "下肢帯","en": ["Pelvic girdle"],"img": "kashi.jpg","id": 159},{"region": "下肢の骨格","num": "(2)","jp": "大腿骨","en": ["Femur"],"img": "kashi.jpg","id": 160},{"region": "下肢の骨格","num": "(3)","jp": "膝蓋骨","en": ["Patella"],"img": "kashi.jpg","id": 161},{"region": "下肢の骨格","num": "(4)","jp": "脛骨","en": ["Tibia"],"img": "kashi.jpg","id": 162},{"region": "下肢の骨格","num": "(5)","jp": "腓骨","en": ["Fibula"],"img": "kashi.jpg","id": 163},{"region": "下肢の骨格","num": "(6)","jp": "足根骨","en": ["Tarsal bones"],"img": "kashi.jpg","id": 164},{"region": "下肢の骨格","num": "(7)","jp": "下腿","en": ["Lower leg"],"img": "kashi.jpg","id": 165},{"region": "下肢の骨格","num": "(8)","jp": "大腿","en": ["Thigh"],"img": "kashi.jpg","id": 166},{"region": "寛骨 内側面","num": "(1)","jp": "腸骨稜","en": ["Iliac crest"],"img": "kankotsu1.jpg","id": 167},{"region": "寛骨 内側面","num": "(2)","jp": "上前腸骨棘","en": ["Anterior superior iliac spine"],"img": "kankotsu1.jpg","id": 168},{"region": "寛骨 内側面","num": "(3)","jp": "弓状線","en": ["Arcuate line"],"img": "kankotsu1.jpg","id": 169},{"region": "寛骨 内側面","num": "(4)","jp": "恥骨筋線","en": ["Pectineal line"],"img": "kankotsu1.jpg","id": 170},{"region": "寛骨 内側面","num": "(5)","jp": "恥骨結節","en": ["Pubic tubercle"],"img": "kankotsu1.jpg","id": 171},{"region": "寛骨 内側面","num": "(6)","jp": "閉鎖孔","en": ["Obturator foramen"],"img": "kankotsu1.jpg","id": 172},{"region": "寛骨 内側面","num": "(7)","jp": "坐骨枝","en": ["Ischial ramus"],"img": "kankotsu1.jpg","id": 173},{"region": "寛骨 内側面","num": "(8)","jp": "坐骨結節","en": ["Ischial tuberosity"],"img": "kankotsu1.jpg","id": 174},{"region": "寛骨 内側面","num": "(9)","jp": "坐骨棘","en": ["Ischial spine"],"img": "kankotsu1.jpg","id": 175},{"region": "下肢帯","num": "(1)","jp": "岬角","en": ["Promontory"],"img": "kashitai.jpg","id": 176},{"region": "下肢帯","num": "(2)","jp": "仙骨翼","en": ["Ala of sacrum"],"img": "kashitai.jpg","id": 177},{"region": "下肢帯","num": "(3)","jp": "腸骨窩","en": ["Iliac fossa"],"img": "kashitai.jpg","id": 178},{"region": "下肢帯","num": "(4)","jp": "恥骨櫛","en": ["Pecten pubis"],"img": "kashitai.jpg","id": 179},{"region": "下肢帯","num": "(5)","jp": "坐骨棘","en": ["Ischial spine"],"img": "kashitai.jpg","id": 180},{"region": "下肢帯","num": "(6)","jp": "仙腸関節","en": ["Sacroiliac joint"],"img": "kashitai.jpg","id": 181},{"region": "寛骨の構成","num": "(1)","jp": "腸骨稜","en": ["Iliac crest"],"img": "kankotsu_kousei.jpg","id": 182},{"region": "寛骨の構成","num": "(2)","jp": "上前腸骨棘","en": ["Anterior superior iliac spine"],"img": "kankotsu_kousei.jpg","id": 183},{"region": "寛骨の構成","num": "(3)","jp": "寛骨臼","en": ["Acetabulum"],"img": "kankotsu_kousei.jpg","id": 184},{"region": "寛骨の構成","num": "(4)","jp": "恥骨結節","en": ["Pubic tubercle"],"img": "kankotsu_kousei.jpg","id": 185},{"region": "寛骨の構成","num": "(5)","jp": "閉鎖孔","en": ["Obturator foramen"],"img": "kankotsu_kousei.jpg","id": 186},{"region": "寛骨の構成","num": "(6)","jp": "坐骨結節","en": ["Ischial tuberosity"],"img": "kankotsu_kousei.jpg","id": 187},{"region": "寛骨の構成","num": "(7)","jp": "坐骨棘","en": ["Ischial spine"],"img": "kankotsu_kousei.jpg","id": 188},{"region": "寛骨の構成","num": "(8)","jp": "大坐骨切痕","en": ["Greater sciatic notch"],"img": "kankotsu_kousei.jpg","id": 189},{"region": "寛骨の構成","num": "(9)","jp": "下後腸骨棘","en": ["Posterior inferior iliac spine"],"img": "kankotsu_kousei.jpg","id": 190},{"region": "大腿骨","num": "(1)","jp": "大転子","en": ["Greater trochanter"],"img": "daitaikotsu.jpg","id": 191},{"region": "大腿骨","num": "(2)","jp": "転子間稜","en": ["Intertrochanteric crest"],"img": "daitaikotsu.jpg","id": 192},{"region": "大腿骨","num": "(3)","jp": "粗線の外側唇","en": ["Lateral lip of the linea aspera"],"img": "daitaikotsu.jpg","id": 193},{"region": "大腿骨","num": "(4)","jp": "粗線の内側唇","en": ["Medial lip of the linea aspera"],"img": "daitaikotsu.jpg","id": 194},{"region": "大腿骨","num": "(5)","jp": "外側顆","en": ["Lateral condyle"],"img": "daitaikotsu.jpg","id": 195},{"region": "大腿骨","num": "(6)","jp": "顆間窩","en": ["Intercondylar notch"],"img": "daitaikotsu.jpg","id": 196},{"region": "大腿骨","num": "(7)","jp": "内側顆","en": ["Medial condyle"],"img": "daitaikotsu.jpg","id": 197},{"region": "大腿骨","num": "(8)","jp": "内側上顆","en": ["Medial epicondyle"],"img": "daitaikotsu.jpg","id": 198},{"region": "大腿骨","num": "(9)","jp": "内転筋結節","en": ["Adductor tubercle"],"img": "daitaikotsu.jpg","id": 199},{"region": "大腿骨","num": "(10)","jp": "小転子","en": ["Lesser trochanter"],"img": "daitaikotsu.jpg","id": 200},{"region": "大腿骨","num": "(11)","jp": "大腿骨頸","en": ["Neck of femur"],"img": "daitaikotsu.jpg","id": 201},{"region": "大腿骨","num": "(12)","jp": "大腿骨頭","en": ["Head of femur"],"img": "daitaikotsu.jpg","id": 202},{"region": "股関節 1","num": "(1)","jp": "寛骨臼縁","en": ["Bony acetabular rim"],"img": "kokansetsu1.jpg","id": 203},{"region": "股関節 1","num": "(2)","jp": "恥骨結節","en": ["Pubic tubercle"],"img": "kokansetsu1.jpg","id": 204},{"region": "股関節 1","num": "(3)","jp": "大腿骨頸","en": ["Neck of femur"],"img": "kokansetsu1.jpg","id": 205},{"region": "股関節 1","num": "(4)","jp": "小転子","en": ["Lesser trochanter"],"img": "kokansetsu1.jpg","id": 206},{"region": "股関節 1","num": "(5)","jp": "大腿骨頭","en": ["Head of femur"],"img": "kokansetsu1.jpg","id": 207},{"region": "股関節 1","num": "(6)","jp": "上前腸骨棘","en": ["Anterior superior iliac spine"],"img": "kokansetsu1.jpg","id": 208},{"region": "股関節 2","num": "(1)","jp": "大転子","en": ["Greater trochanter"],"img": "kokansetsu2.jpg","id": 209},{"region": "股関節 2","num": "(2)","jp": "粗線","en": ["Linea aspera"],"img": "kokansetsu2.jpg","id": 210},{"region": "股関節 2","num": "(3)","jp": "坐骨結節","en": ["Ischial tuberosity"],"img": "kokansetsu2.jpg","id": 211},{"region": "股関節 2","num": "(4)","jp": "坐骨棘","en": ["Ischial spine"],"img": "kokansetsu2.jpg","id": 212},{"region": "股関節 2","num": "(5)","jp": "下後腸骨棘","en": ["Posterior inferior iliac spine"],"img": "kokansetsu2.jpg","id": 213},{"region": "股関節 2","num": "(6)","jp": "上後腸骨棘","en": ["Posterior superior iliac spine"],"img": "kokansetsu2.jpg","id": 214},{"region": "膝関節 1","num": "(1)","jp": "内側上顆","en": ["Medial epicondyle"],"img": "hizakansetsu1.jpg","id": 215},{"region": "膝関節 1","num": "(2)","jp": "大腿骨の内側顆","en": ["Medial femoral condyle"],"img": "hizakansetsu1.jpg","id": 216},{"region": "膝関節 1","num": "(3)","jp": "脛骨の内側顆","en": ["Medial tibial condyle"],"img": "hizakansetsu1.jpg","id": 217},{"region": "膝関節 1","num": "(4)","jp": "脛骨粗面","en": ["Tibial tuberosity"],"img": "hizakansetsu1.jpg","id": 218},{"region": "膝関節 1","num": "(5)","jp": "上関節面","en": ["Tibial plateau"],"img": "hizakansetsu1.jpg","id": 219},{"region": "膝関節 1","num": "(6)","jp": "膝蓋骨","en": ["Patella"],"img": "hizakansetsu1.jpg","id": 220},{"region": "膝関節 1","num": "(7)","jp": "大腿骨の外側顆","en": ["Lateral femoral condyle"],"img": "hizakansetsu1.jpg","id": 221},{"region": "膝関節 2","num": "(1)","jp": "顆間窩","en": ["Intercondylar notch"],"img": "hizakansetsu2.jpg","id": 222},{"region": "膝関節 2","num": "(2)","jp": "大腿骨の外側顆","en": ["Lateral femoral condyle"],"img": "hizakansetsu2.jpg","id": 223},{"region": "膝関節 2","num": "(3)","jp": "顆間隆起","en": ["Intercondylar eminence"],"img": "hizakansetsu2.jpg","id": 224},{"region": "膝関節 2","num": "(4)","jp": "脛骨の内側顆","en": ["Medial tibial condyle"],"img": "hizakansetsu2.jpg","id": 225},{"region": "膝関節 2","num": "(5)","jp": "大腿骨の内側顆","en": ["Medial femoral condyle"],"img": "hizakansetsu2.jpg","id": 226},{"region": "膝関節 2","num": "(6)","jp": "内側上顆","en": ["Medial epicondyle"],"img": "hizakansetsu2.jpg","id": 227},{"region": "脛骨と腓骨","num": "(1)","jp": "上関節面","en": ["Tibial plateau"],"img": "keikotsu_hikotsu.jpg","id": 228},{"region": "脛骨と腓骨","num": "(2)","jp": "内側顆","en": ["Medial condyle"],"img": "keikotsu_hikotsu.jpg","id": 229},{"region": "脛骨と腓骨","num": "(3)","jp": "脛骨粗面","en": ["Tibial tuberosity"],"img": "keikotsu_hikotsu.jpg","id": 230},{"region": "脛骨と腓骨","num": "(4)","jp": "内果","en": ["Medial malleolus"],"img": "keikotsu_hikotsu.jpg","id": 231},{"region": "脛骨と腓骨","num": "(5)","jp": "足関節窩","en": ["Ankle mortise"],"img": "keikotsu_hikotsu.jpg","id": 232},{"region": "脛骨と腓骨","num": "(6)","jp": "外果","en": ["Lateral malleolus"],"img": "keikotsu_hikotsu.jpg","id": 233},{"region": "脛骨と腓骨","num": "(7)","jp": "下腿骨間膜","en": ["Interosseous membrane"],"img": "keikotsu_hikotsu.jpg","id": 234},{"region": "脛骨と腓骨","num": "(8)","jp": "腓骨頭","en": ["Head of fibula"],"img": "keikotsu_hikotsu.jpg","id": 235},{"region": "脛骨と腓骨","num": "(9)","jp": "脛腓関節","en": ["Tibiofibular joint"],"img": "keikotsu_hikotsu.jpg","id": 236},{"region": "足の骨格 1","num": "(1)","jp": "外側楔状骨","en": ["Lateral cuneiform"],"img": "ashi1.jpg","id": 237},{"region": "足の骨格 1","num": "(2)","jp": "立方骨","en": ["Cuboid"],"img": "ashi1.jpg","id": 238},{"region": "足の骨格 1","num": "(3)","jp": "距骨頭","en": ["Head of talus"],"img": "ashi1.jpg","id": 239},{"region": "足の骨格 1","num": "(4)","jp": "舟状骨","en": ["Navicular"],"img": "ashi1.jpg","id": 240},{"region": "足の骨格 1","num": "(5)","jp": "内側楔状骨","en": ["Medial cuneiform"],"img": "ashi1.jpg","id": 241},{"region": "足の骨格 1","num": "(6)","jp": "第1中足骨底","en": ["Base of 1st metatarsal"],"img": "ashi1.jpg","id": 242},{"region": "足の骨格 1","num": "(7)","jp": "第1中足骨頭","en": ["Head of 1st metatarsal"],"img": "ashi1.jpg","id": 243},{"region": "足の骨格 1","num": "(8)","jp": "第1末節骨","en": ["1st distal phalanx"],"img": "ashi1.jpg","id": 244},{"region": "足の骨格 2","num": "(1)","jp": "第1基節骨","en": ["1st proximal phalanx"],"img": "ashi2.jpg","id": 245},{"region": "足の骨格 2","num": "(2)","jp": "種子骨","en": ["Sesamoids","sesamoid bones"],"img": "ashi2.jpg","id": 246},{"region": "足の骨格 2","num": "(3)","jp": "内側楔状骨","en": ["Medial cuneiform"],"img": "ashi2.jpg","id": 247},{"region": "足の骨格 2","num": "(4)","jp": "舟状骨","en": ["Navicular"],"img": "ashi2.jpg","id": 248},{"region": "足の骨格 2","num": "(5)","jp": "載距突起","en": ["Sustentaculum tali","talar shelf"],"img": "ashi2.jpg","id": 249},{"region": "足の骨格 2","num": "(6)","jp": "踵骨","en": ["Calcaneus"],"img": "ashi2.jpg","id": 250},{"region": "足の骨格 2","num": "(7)","jp": "長腓骨筋腱溝","en": ["Groove for fibularis longus tendon","Groove for tendon of fibularis longus","Groove for tendon of peroneus longus"],"img": "ashi2.jpg","id": 251},{"region": "足の骨格 2","num": "(8)","jp": "第5中足骨粗面","en": ["Tuberosity of 5th metatarsal"],"img": "ashi2.jpg","id": 252},{"region": "足首と足の関節 2","num": "(1)","jp": "脛骨","en": ["Tibia"],"img": "ashikubi.jpg","id": 253},{"region": "足首と足の関節 2","num": "(2)","jp": "距腿関節","en": ["Talocrural joint"],"img": "ashikubi.jpg","id": 254},{"region": "足首と足の関節 2","num": "(3)","jp": "舟状骨","en": ["Navicular"],"img": "ashikubi.jpg","id": 255},{"region": "足首と足の関節 2","num": "(4)","jp": "種子骨","en": ["Sesamoids","sesamoid bones"],"img": "ashikubi.jpg","id": 256},{"region": "足首と足の関節 2","num": "(5)","jp": "載距突起","en": ["Sustentaculum tali"],"img": "ashikubi.jpg","id": 257},{"region": "足首と足の関節 2","num": "(6)","jp": "距骨下関節","en": ["Subtalar joint"],"img": "ashikubi.jpg","id": 258},{"region": "足首と足の関節 2","num": "(7)","jp": "距骨","en": ["Talus"],"img": "ashikubi.jpg","id": 259},{"region": "足首と足の関節 2","num": "(8)","jp": "外果","en": ["Lateral malleolus"],"img": "ashikubi.jpg","id": 260}];
         
         let quizData = [];
         let score = 0;
@@ -265,13 +346,185 @@
         let currentFilter = 'all';
         let activeRowId = null;
 
+        // マルチセレクト用変数
+        let selectedRows = new Set();
+        let lastSelectedRowId = null;
+
         const tableBody = document.getElementById('tableBody');
         const formulaInput = document.getElementById('formulaInput');
         const progressText = document.getElementById('progressText');
         const homeModal = document.getElementById('homeModal');
         const previewPanel = document.getElementById('previewPanel');
+        const sheetContainer = document.getElementById('sheetContainer');
         const resizer = document.getElementById('dragMe');
-        const sheetContainer = document.querySelector('.sheet-container');
+        const workspaceContainer = document.getElementById('workspaceContainer');
+
+        
+        // View Menu Logic
+        function toggleViewMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('viewMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('viewMenu');
+            if(menu) menu.style.display = 'none';
+        });
+        document.getElementById('viewMenu').addEventListener('click', (e) => {
+            e.stopPropagation(); 
+        });
+        function toggleCol(col) {
+            document.body.classList.toggle('hide-col-' + col);
+        }
+
+        
+        // Context Menu & Editing Logic
+        let contextMenuTargetId = null;
+
+        document.addEventListener('contextmenu', (e) => {
+            const tr = e.target.closest('tr');
+            if (tr) {
+                e.preventDefault();
+                const rowId = parseInt(tr.id.replace('row-', ''));
+                contextMenuTargetId = rowId;
+
+                // 選択されていない行で右クリックした場合は選択状態をリセットしてその行だけ選択する
+                if (!selectedRows.has(rowId)) {
+                    clearSelection();
+                    selectedRows.add(rowId);
+                    tr.classList.add('row-selected');
+                    lastSelectedRowId = rowId;
+                }
+                
+                let contextMenu = document.getElementById('editContextMenu');
+                if (!contextMenu) {
+                    contextMenu = document.createElement('div');
+                    contextMenu.id = 'editContextMenu';
+                    contextMenu.style.position = 'absolute';
+                    contextMenu.style.backgroundColor = '#fff';
+                    contextMenu.style.border = '1px solid #dadce0';
+                    contextMenu.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+                    contextMenu.style.borderRadius = '4px';
+                    contextMenu.style.zIndex = '2000';
+                    contextMenu.style.padding = '4px 0';
+                    document.body.appendChild(contextMenu);
+                }
+                
+                const isMulti = selectedRows.size > 1;
+
+                contextMenu.innerHTML = `
+                    <div style="padding: 8px 16px; font-size: 11px; color: #5f6368; font-weight: bold; border-bottom: 1px solid var(--cell-border); margin-bottom: 4px;">
+                        ${isMulti ? selectedRows.size + '件選択中' : '操作'}
+                    </div>
+                    ${!isMulti ? `<div style="padding: 8px 16px; cursor: pointer; font-size: 13px; color: #202124;" onmouseover="this.style.backgroundColor='#f1f3f4'" onmouseout="this.style.backgroundColor='transparent'" onclick="triggerEdit()">📝 解答を修正する (正解に上書き)</div>` : ''}
+                    <div style="padding: 8px 16px; cursor: pointer; font-size: 13px; color: #0f9d58;" onmouseover="this.style.backgroundColor='#f1f3f4'" onmouseout="this.style.backgroundColor='transparent'" onclick="triggerForceCorrect()">✅ 一括で正解にする</div>
+                    <div style="padding: 8px 16px; cursor: pointer; font-size: 13px; color: #202124;" onmouseover="this.style.backgroundColor='#f1f3f4'" onmouseout="this.style.backgroundColor='transparent'" onclick="triggerRetry()">🔄 やり直す (未回答に戻す)</div>
+                    <div style="padding: 8px 16px; cursor: pointer; font-size: 13px; color: #d93025;" onmouseover="this.style.backgroundColor='#f1f3f4'" onmouseout="this.style.backgroundColor='transparent'" onclick="triggerDelete()">✖ 一括で削除（除外）する</div>
+                `;
+                
+                contextMenu.style.left = `${e.pageX}px`;
+                contextMenu.style.top = `${e.pageY}px`;
+                contextMenu.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('click', () => {
+            const contextMenu = document.getElementById('editContextMenu');
+            if (contextMenu) contextMenu.style.display = 'none';
+        });
+
+        window.triggerEdit = function() {
+            if (!contextMenuTargetId) return;
+            const inputEl = document.getElementById(`input-${contextMenuTargetId}`);
+            if (inputEl) {
+                inputEl.removeAttribute('readonly');
+                inputEl.focus();
+                inputEl.dataset.forceCorrectMode = "true";
+            }
+        };
+
+        window.triggerRetry = function() {
+            selectedRows.forEach(id => retryQuestion(id));
+            clearSelection();
+        };
+
+        window.triggerForceCorrect = function() {
+            selectedRows.forEach(id => forceCorrect(id));
+            clearSelection();
+        };
+
+        window.triggerDelete = function() {
+            selectedRows.forEach(id => excludeQuestion(id, true));
+            renderTable();
+            clearSelection();
+        };
+
+        function forceCorrect(id) {
+            const qIndex = quizData.findIndex(q => q.id === id);
+            if (qIndex !== -1 && quizData[qIndex].status !== 'correct') {
+                quizData[qIndex].status = 'correct';
+                quizData[qIndex].userAnswer = quizData[qIndex].en[0];
+                const tr = document.getElementById(`row-${id}`);
+                const inputEl = document.getElementById(`input-${id}`);
+                if(tr && inputEl) {
+                    tr.className = 'row-correct';
+                    tr.querySelector('.status-icon').innerText = '[正]';
+                    tr.querySelector('.status-icon').className = 'status-icon status-correct';
+                    tr.style.color = '#202124';
+                    inputEl.value = quizData[qIndex].en[0];
+                    inputEl.setAttribute('readonly', 'true');
+                }
+                score++;
+                updateProgress();
+            }
+        }
+
+        // Selection Logic
+        function toggleRowSelection(e, id) {
+            if(e.target.tagName === 'INPUT' || e.target.classList.contains('status-icon') || e.target.classList.contains('star-icon') || e.target.innerText === '✖') return;
+            
+            const tr = document.getElementById(`row-${id}`);
+            
+            if (e.shiftKey && lastSelectedRowId !== null) {
+                const rows = Array.from(document.querySelectorAll('#tableBody tr'));
+                const startIdx = rows.findIndex(r => r.id === `row-${lastSelectedRowId}`);
+                const endIdx = rows.findIndex(r => r.id === `row-${id}`);
+                
+                if (startIdx === -1 || endIdx === -1) return;
+                
+                const start = Math.min(startIdx, endIdx);
+                const end = Math.max(startIdx, endIdx);
+                
+                for(let i = start; i <= end; i++) {
+                    const rowId = parseInt(rows[i].id.replace('row-', ''));
+                    selectedRows.add(rowId);
+                    rows[i].classList.add('row-selected');
+                }
+            } else if (e.ctrlKey || e.metaKey) {
+                if (selectedRows.has(id)) {
+                    selectedRows.delete(id);
+                    tr.classList.remove('row-selected');
+                } else {
+                    selectedRows.add(id);
+                    tr.classList.add('row-selected');
+                }
+                lastSelectedRowId = id;
+            } else {
+                clearSelection();
+                selectedRows.add(id);
+                tr.classList.add('row-selected');
+                lastSelectedRowId = id;
+            }
+        }
+
+        function clearSelection() {
+            selectedRows.forEach(id => {
+                const tr = document.getElementById(`row-${id}`);
+                if(tr) tr.classList.remove('row-selected');
+            });
+            selectedRows.clear();
+            lastSelectedRowId = null;
+        }
 
         // Initialization
         window.onload = () => {
@@ -283,9 +536,10 @@
             quizData = allQuestions.map((q, index) => ({
                 ...q,
                 _index: index + 1,
-                status: 'unanswered', // unanswered, correct, wrong
+                status: 'unanswered', 
                 userAnswer: '',
-                starred: false
+                starred: false,
+                excluded: false 
             }));
         }
 
@@ -300,25 +554,27 @@
             renderTable();
             closeHomeModal();
             clearPreview();
+            clearSelection();
         }
 
         function renderTable() {
             tableBody.innerHTML = '';
             let correctCount = 0;
-            let displayCount = 0;
 
             quizData.forEach((q, i) => {
+                if (q.excluded) return; 
+
                 if (q.status === 'correct') correctCount++;
 
-                // Apply Filters
                 if (currentFilter === 'star' && !q.starred) return;
                 if (currentFilter === 'mistake' && q.status !== 'wrong') return;
-
-                displayCount++;
+                if (currentFilter === 'unmemorized' && q.status === 'correct') return; 
                 
                 const tr = document.createElement('tr');
                 tr.id = `row-${q.id}`;
                 tr.className = q.status === 'correct' ? 'row-correct' : (q.status === 'wrong' ? 'row-wrong' : '');
+                
+                if (selectedRows.has(q.id)) tr.classList.add('row-selected');
                 if(q.status === 'wrong') tr.style.color = '#d93025';
 
                 let statusIconText = '[-]';
@@ -334,7 +590,6 @@
 
                 let starClass = q.starred ? 'star-icon active' : 'star-icon';
                 
-                // Red Sheet Classes
                 let jpClass = document.getElementById('maskJpCheckbox').checked ? 'red-target' : '';
                 let ansClass = document.getElementById('maskEnCheckbox').checked ? 'red-target' : '';
 
@@ -351,7 +606,10 @@
                     </td>
                     <td class="${ansClass}"><div class="cell-content">${q.en.join(', ')}</div></td>
                     <td><div class="${starClass}" onclick="toggleStar(${q.id}, this)">★</div></td>
+                    <td><div style="cursor:pointer; color:#70757a; text-align:center; font-size: 16px;" onclick="excludeQuestion(${q.id})" title="この問題を一時削除">✖</div></td>
                 `;
+                
+                tr.addEventListener('click', (e) => toggleRowSelection(e, q.id));
                 tableBody.appendChild(tr);
             });
 
@@ -368,12 +626,14 @@
                     activeRowId = parseInt(e.target.dataset.id);
                     formulaInput.value = e.target.value;
                     const tr = e.target.closest('tr');
-                    tableBody.querySelectorAll('tr').forEach(r => r.style.outline = 'none');
-                    tr.style.outline = '2px solid #1a73e8';
-                    tr.style.outlineOffset = '-2px';
-                    tr.style.zIndex = '10';
                     
-                    // Show image in preview panel
+                    if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !selectedRows.has(activeRowId)) {
+                        clearSelection();
+                        selectedRows.add(activeRowId);
+                        tr.classList.add('row-selected');
+                        lastSelectedRowId = activeRowId;
+                    }
+                    
                     updatePreview(activeRowId);
                 });
                 
@@ -382,8 +642,6 @@
                 });
 
                 input.addEventListener('blur', (e) => {
-                    e.target.closest('tr').style.outline = 'none';
-                    e.target.closest('tr').style.zIndex = '0';
                     checkAnswer(e.target);
                 });
 
@@ -391,7 +649,6 @@
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         checkAnswer(e.target);
-                        // Move to next input
                         let nextTr = e.target.closest('tr').nextElementSibling;
                         while(nextTr) {
                             const nextInput = nextTr.querySelector('.sheet-input');
@@ -410,7 +667,6 @@
             const q = quizData.find(q => q.id === id);
             const placeholder = document.getElementById('previewPlaceholder');
             const imgEl = document.getElementById('previewImg');
-            const jpEl = document.getElementById('previewJp');
             const numEl = document.getElementById('previewNum');
 
             if (q && q.img) {
@@ -419,16 +675,12 @@
                 numEl.innerText = q.region + ' ' + (q.num !== '-' ? q.num : '');
                 numEl.style.display = 'block';
                 
-                jpEl.innerText = q.jp;
-                jpEl.style.display = 'block';
-                
                 imgEl.src = q.img;
                 imgEl.style.display = 'block';
             } else if (q) {
                 placeholder.style.display = 'block';
                 placeholder.innerHTML = `「${q.jp}」<br>この問題には画像がありません`;
                 imgEl.style.display = 'none';
-                jpEl.style.display = 'none';
                 numEl.style.display = 'none';
             }
         }
@@ -436,13 +688,11 @@
         function clearPreview() {
             const placeholder = document.getElementById('previewPlaceholder');
             const imgEl = document.getElementById('previewImg');
-            const jpEl = document.getElementById('previewJp');
             const numEl = document.getElementById('previewNum');
             
             placeholder.style.display = 'block';
             placeholder.innerHTML = '問題のセルを選択すると<br>ここに画像が表示されます';
             imgEl.style.display = 'none';
-            jpEl.style.display = 'none';
             numEl.style.display = 'none';
         }
 
@@ -450,12 +700,15 @@
             previewPanel.classList.toggle('collapsed');
             if (previewPanel.classList.contains('collapsed')) {
                 resizer.style.display = 'none';
+                sheetContainer.style.flex = '1 1 0%';
             } else {
-                resizer.style.display = 'block';
+                resizer.style.display = 'flex';
+                sheetContainer.style.flex = '1 1 0%';
+                previewPanel.style.width = '350px';
+                previewPanel.style.flex = 'none';
             }
         }
 
-        // Formula Bar Sync
         formulaInput.addEventListener('input', (e) => {
             if (activeRowId) {
                 const cellInput = document.getElementById(`input-${activeRowId}`);
@@ -481,18 +734,42 @@
             const val = inputEl.value.trim().toLowerCase();
             const qIndex = quizData.findIndex(q => q.id === id);
             if (qIndex === -1 || quizData[qIndex].status === 'correct') return;
+            const tr = document.getElementById(`row-${id}`);
 
             quizData[qIndex].userAnswer = inputEl.value;
 
-            if (val === '') return; // Skip empty
+            if (val === '') return;
+
+            if (inputEl.dataset.forceCorrectMode === "true") {
+                if (val !== '' && !quizData[qIndex].en.some(ans => ans.toLowerCase().trim() === val)) {
+                    quizData[qIndex].en.push(inputEl.value.trim()); 
+                }
+                
+                delete inputEl.dataset.forceCorrectMode;
+                quizData[qIndex].status = 'correct';
+                tr.className = 'row-correct';
+                if(selectedRows.has(id)) tr.classList.add('row-selected');
+                tr.querySelector('.status-icon').innerText = '[正]';
+                tr.querySelector('.status-icon').className = 'status-icon status-correct';
+                tr.style.color = '#202124';
+                inputEl.setAttribute('readonly', 'true');
+                
+                tr.children[6].children[0].innerText = quizData[qIndex].en.join(', ');
+                
+                let newScore = 0;
+                quizData.forEach(q => { if(q.status === 'correct') newScore++; });
+                score = newScore;
+                updateProgress();
+                return;
+            }
 
             const isCorrect = quizData[qIndex].en.some(ans => ans.toLowerCase().trim() === val);
-            const tr = document.getElementById(`row-${id}`);
             const statusIcon = tr.querySelector('.status-icon');
 
             if (isCorrect) {
                 quizData[qIndex].status = 'correct';
                 tr.className = 'row-correct';
+                if(selectedRows.has(id)) tr.classList.add('row-selected');
                 statusIcon.innerText = '[正]';
                 statusIcon.className = 'status-icon status-correct';
                 tr.style.color = '#202124';
@@ -501,6 +778,7 @@
             } else {
                 quizData[qIndex].status = 'wrong';
                 tr.className = 'row-wrong';
+                if(selectedRows.has(id)) tr.classList.add('row-selected');
                 statusIcon.innerText = '[誤]';
                 statusIcon.className = 'status-icon status-wrong';
                 tr.style.color = '#d93025';
@@ -520,14 +798,19 @@
                 quizData[qIndex].status = 'unanswered';
                 quizData[qIndex].userAnswer = '';
                 const inputEl = document.getElementById(`input-${id}`);
-                inputEl.value = '';
-                inputEl.removeAttribute('readonly');
+                if (inputEl) {
+                    inputEl.value = '';
+                    inputEl.removeAttribute('readonly');
+                }
                 const tr = document.getElementById(`row-${id}`);
-                tr.className = '';
-                tr.style.color = '#202124';
-                const statusIcon = tr.querySelector('.status-icon');
-                statusIcon.innerText = '[-]';
-                statusIcon.className = 'status-icon status-unanswered';
+                if (tr) {
+                    tr.className = '';
+                    if(selectedRows.has(id)) tr.classList.add('row-selected');
+                    tr.style.color = '#202124';
+                    const statusIcon = tr.querySelector('.status-icon');
+                    statusIcon.innerText = '[-]';
+                    statusIcon.className = 'status-icon status-unanswered';
+                }
                 updateProgress();
             }
         }
@@ -552,6 +835,82 @@
         function shuffleRows() {
             quizData.sort(() => Math.random() - 0.5);
             renderTable();
+        }
+
+        function resetProgress() {
+            if (confirm('全ての解答状況をリセットして最初からやり直しますか？')) {
+                quizData.forEach(q => {
+                    q.status = 'unanswered';
+                    q.userAnswer = '';
+                });
+                score = 0;
+                renderTable();
+            }
+        }
+
+        function resetByRegion() {
+            const regions = [...new Set(quizData.map(q => q.region))];
+            const regionStr = regions.map((r, i) => `${i + 1}: ${r}`).join('\n');
+            
+            const input = prompt(`リセットしたい単元の番号を入力してください：\n${regionStr}`);
+            if (input === null) return;
+            const idx = parseInt(input) - 1;
+            
+            if (idx >= 0 && idx < regions.length) {
+                const targetRegion = regions[idx];
+                quizData.forEach(q => {
+                    if (q.region === targetRegion) {
+                        q.status = 'unanswered';
+                        q.userAnswer = '';
+                    }
+                });
+                
+                score = quizData.filter(q => q.status === 'correct').length;
+                renderTable();
+                alert(`${targetRegion} の解答をリセットしました。`);
+            }
+        }
+
+        function excludeQuestion(id, silent = false) {
+            const q = quizData.find(q => q.id === id);
+            if (q) {
+                q.excluded = true;
+                if (!silent) renderTable();
+            }
+        }
+
+        function excludeByRegion() {
+            const regions = [...new Set(quizData.map(q => q.region))];
+            const regionStr = regions.map((r, i) => `${i + 1}: ${r}`).join('\n');
+            
+            const input = prompt(`一時削除（除外）したい単元の番号を入力してください：\n${regionStr}`);
+            if (input === null) return;
+            
+            const idx = parseInt(input) - 1;
+            if (idx >= 0 && idx < regions.length) {
+                const targetRegion = regions[idx];
+                quizData.forEach(q => {
+                    if (q.region === targetRegion) q.excluded = true;
+                });
+                renderTable();
+                alert(`${targetRegion} を一時削除しました。（「削除を復元」ボタンで元に戻せます）`);
+            }
+        }
+
+        function restoreExcluded() {
+            let count = 0;
+            quizData.forEach(q => {
+                if (q.excluded) {
+                    q.excluded = false;
+                    count++;
+                }
+            });
+            if (count > 0) {
+                renderTable();
+                alert(`${count}件の問題をリストに復元しました。`);
+            } else {
+                alert('現在、一時削除されている問題はありません。');
+            }
         }
 
         function showHint() {
@@ -581,7 +940,7 @@
             const isCheckedEn = document.getElementById('maskEnCheckbox').checked;
             
             document.querySelectorAll('.col-jp').forEach((el, idx) => {
-                if(idx > 0) el.classList.toggle('red-target', isCheckedJp); // skip header
+                if(idx > 0) el.classList.toggle('red-target', isCheckedJp);
             });
             
             updateRedSheetGlobal();
@@ -591,7 +950,6 @@
             const tb = document.getElementById('quizTable');
             tb.classList.add('red-sheet-active');
             
-            // Reapply red-target classes on re-render
             const isCheckedJp = document.getElementById('maskJpCheckbox').checked;
             const isCheckedEn = document.getElementById('maskEnCheckbox').checked;
             
@@ -603,7 +961,8 @@
         }
 
         function updateProgress() {
-            const total = quizData.length;
+            const activeQuestions = quizData.filter(q => !q.excluded);
+            const total = activeQuestions.length;
             const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
             progressText.innerText = `正解数: ${score} / ${total} | 達成率: ${percentage}%`;
         }
@@ -614,6 +973,14 @@
 
         function closeHomeModal() {
             homeModal.style.display = 'none';
+        }
+
+        function openHelpModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').style.display = 'none';
         }
 
         function saveProgress() {
@@ -630,7 +997,6 @@
                 score = savedData.score;
                 currentFilter = savedData.currentFilter;
                 
-                // update UI based on saved state
                 renderTable();
                 closeHomeModal();
                 alert('保存データから再開しました。');
@@ -639,35 +1005,35 @@
             }
         }
 
-        // Resizer Logic
         function initResizer() {
             let isResizing = false;
 
-            resizer.addEventListener('mousedown', function (e) {
+            resizer.addEventListener('mousedown', (e) => {
                 isResizing = true;
                 resizer.classList.add('dragging');
                 document.body.style.cursor = 'col-resize';
-                document.body.style.userSelect = 'none'; // Prevent text selection
+                document.body.style.userSelect = 'none';
             });
 
-            document.addEventListener('mousemove', function (e) {
+            document.addEventListener('mousemove', (e) => {
                 if (!isResizing) return;
-                
-                // Calculate the new width based on mouse position
-                const newWidth = document.body.clientWidth - e.clientX;
-                
-                // Min/Max boundaries for the image panel
-                if (newWidth > 150 && newWidth < document.body.clientWidth - 300) {
-                    previewPanel.style.width = `${newWidth}px`;
-                }
+                const containerRect = workspaceContainer.getBoundingClientRect();
+                let newPanelWidth = containerRect.right - e.clientX;
+                const minPanelWidth = 150;
+                const maxPanelWidth = containerRect.width - 300; 
+                if (newPanelWidth < minPanelWidth) newPanelWidth = minPanelWidth;
+                if (newPanelWidth > maxPanelWidth) newPanelWidth = maxPanelWidth;
+                previewPanel.style.width = `${newPanelWidth}px`;
+                previewPanel.style.flex = 'none'; 
+                sheetContainer.style.flex = '1 1 0%'; 
             });
 
-            document.addEventListener('mouseup', function (e) {
+            document.addEventListener('mouseup', () => {
                 if (isResizing) {
                     isResizing = false;
                     resizer.classList.remove('dragging');
-                    document.body.style.cursor = 'default';
-                    document.body.style.userSelect = 'auto';
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
                 }
             });
         }
